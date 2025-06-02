@@ -38,7 +38,7 @@ const ProductCard = ({ product }: ProductProps) => {
         <h2 className="font-semibold text-lg lg:text-xl truncate">
           {product.name}
         </h2>
-        <p className="text-gray-600 text-sm lg:text-md mt-2 line-clamp-3">
+        <p className="text-gray-600 text-sm lg:text-md mt-2 line-clamp-2">
           {product.description}
         </p>
       </CardContent>
