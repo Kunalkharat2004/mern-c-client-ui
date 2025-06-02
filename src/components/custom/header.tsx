@@ -28,6 +28,7 @@ import Image from "next/image";
 
 const Header = () => {
   return (
+    // The main header element now contains the nav and the divider
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
         {/* Logo and Restaurant Select */}
@@ -145,6 +146,8 @@ const Header = () => {
           </DropdownMenu>
         </div>
       </nav>
+
+      <hr className="border-t border-gray-200" />
     </header>
   );
 };
