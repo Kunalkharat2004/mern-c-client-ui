@@ -1,20 +1,12 @@
 import Link from "next/link";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-// Import DropdownMenu components
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-// Import new icons for menu items
+} from "@/components/ui/dropdown-menu";
+
 import {
   Phone,
   ShoppingBasket,
@@ -22,16 +14,16 @@ import {
   UtensilsCrossed,
   ClipboardList,
 } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import TenantSelect from "./tenant-select";
+
 
 const Header = () => {
   return (
-    // The main header element now contains the nav and the divider
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
-        {/* Logo and Restaurant Select */}
         <div className="flex items-center gap-4">
           <Link href="/">
             <Image
@@ -43,16 +35,8 @@ const Header = () => {
             />
           </Link>
 
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Restaurant" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Chezzy Delight</SelectItem>
-              <SelectItem value="dark">Pizza Hub</SelectItem>
-              <SelectItem value="system">Kid&apos;s Corner</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* Render the Client Component for Tenant Selection */}
+          <TenantSelect />
         </div>
 
         {/* Desktop Navigation and Actions (hidden on small screens) */}
@@ -115,17 +99,13 @@ const Header = () => {
             <DropdownMenuContent align="end" className="w-56">
               <Link href="/menu">
                 <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
-                  {" "}
-                  {/* Added flex and gap */}
-                  <UtensilsCrossed size={16} /> {/* Icon for Menu */}
+                  <UtensilsCrossed size={16} />
                   <span>Menu</span>
                 </DropdownMenuItem>
               </Link>
               <Link href="/orders">
                 <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
-                  {" "}
-                  {/* Added flex and gap */}
-                  <ClipboardList size={16} /> {/* Icon for Orders */}
+                  <ClipboardList size={16} />
                   <span>Orders</span>
                 </DropdownMenuItem>
               </Link>
