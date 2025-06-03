@@ -11,6 +11,8 @@ import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import ToppingList from "./topping-list";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
 
 export type Product = {
   _id: string;
@@ -223,6 +225,20 @@ const ProductCard = ({ product }: ProductProps) => {
 
                 <div className="mt-6">
                   <ToppingList toppings={toppings} />
+                </div>
+
+                <div className="flex items-center justify-between mt-8 lg:mt-12">
+                  <p className="text-sm sm:text-base font-semibold mt-1">
+                    Total Price:{" "}
+                    <span className="font-semibold text-primary">
+                      ₹{product.price.toFixed(2)}
+                    </span>
+                  </p>
+
+                  <Button className="cursor-pointer flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold">
+                    <ShoppingCart />
+                    Add to Cart
+                  </Button>
                 </div>
               </div>
             </div>
