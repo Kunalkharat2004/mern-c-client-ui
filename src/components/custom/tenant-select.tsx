@@ -42,14 +42,14 @@ const TenantSelect = () => {
             )}&page=1&limit=${limit}`
           : `${BACKEND_URL}/api/auth/tenant?page=1&limit=${limit}`;
 
-        const data = await fetch(url, {
+        const fetchTenantsResponse = await fetch(url, {
             next: { revalidate: 300 }, // Revalidate every 5 minutes
         });
 
-        if (!data.ok) {
+        if (!fetchTenantsResponse.ok) {
           throw new Error("Failed to fetch tenants data");
         }
-        const result = await data.json();
+        const result = await fetchTenantsResponse.json();
         setTenants(result.data);
       } catch (error) {
         console.error("Error fetching tenants:", error);
@@ -61,7 +61,7 @@ const TenantSelect = () => {
     [BACKEND_URL]
     );
     
-    console.log("Tenants fetched:", tenants); // Debugging log to see fetched tenants
+    // console.log("Tenants fetched:", tenants); // Debugging log to see fetched tenants
 
   // Debounced version of fetchTenants for search input
   // Fetch more results for search (e.g., limit=20 or higher, depending on how many you want to display for search)

@@ -20,7 +20,8 @@ import Image from "next/image";
 import TenantSelect from "./tenant-select";
 
 
-const Header = () => {
+const Header = async() => {
+
   return (
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
