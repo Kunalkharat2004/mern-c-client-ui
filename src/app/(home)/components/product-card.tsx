@@ -14,6 +14,8 @@ import ToppingList from "./topping-list";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { Product } from "@/lib/types";
+import { primaryButtonClasses } from "@/app/lib/button-styles";
+import { cn } from "@/lib/utils";
 
 
 type ProductProps = {
@@ -85,7 +87,7 @@ const ProductCard = ({ product }: ProductProps) => {
           <Image
             src={product.image}
             alt={product.name}
-            fill 
+            fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -108,9 +110,7 @@ const ProductCard = ({ product }: ProductProps) => {
         </p>
 
         <Dialog>
-          <DialogTrigger className="bg-orange-200 hover:bg-orange-300 text-orange-500 px-6 py-2 rounded-full shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 cursor-pointer">
-            Choose
-          </DialogTrigger>
+          <DialogTrigger className={primaryButtonClasses}>Choose</DialogTrigger>
 
           {/*
             Remove `overflow-y-auto` from DialogContent.
@@ -226,8 +226,13 @@ const ProductCard = ({ product }: ProductProps) => {
                     <span className="font-semibold text-primary">₹{11}</span>
                   </p>
 
-                  <Button className="cursor-pointer flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold">
-                    <ShoppingCart />
+                  <Button
+                    className={cn(
+                      "cursor-pointer flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold",
+                      primaryButtonClasses
+                    )}
+                  >
+                    <ShoppingCart size={20}/>
                     Add to Cart
                   </Button>
                 </div>

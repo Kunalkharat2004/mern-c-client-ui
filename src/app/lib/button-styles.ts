@@ -1,0 +1,1 @@
+export const primaryButtonClasses = `bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold uppercase px-4 py-2 rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out focus:ring-2 focus:ring-orange-300 focus:outline-none cursor-pointer outline-none`;
