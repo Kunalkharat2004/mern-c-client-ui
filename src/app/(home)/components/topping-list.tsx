@@ -1,27 +1,33 @@
-'use client'
-
-import React from "react";
+import React, { useEffect } from "react";
 import ToppingCard from "./topping-card";
+import { Topping } from "@/lib/types";
 
-export type Topping = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-};
 
-type ToppingProps = {
-  toppings: Topping[];
-};
+const ToppingList = () => {
 
-const ToppingList = ({ toppings }: ToppingProps) => {
+  const [toppings, setToppings] = React.useState<Topping[]>([]);
+  const [selectedToppings, setSelectedToppings] = React.useState<Topping[]>([]);
 
-  const [selectedToppings, setSelectedToppings] = React.useState<Topping[]>([toppings[0]]);
+  useEffect(() => {
+    const fetchToppings = async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/toppings?tenantId=2adeb26a-266e-4ff4-8b0b-ec79cefdfaf7`);
+      if (!response.ok) {
+        throw new Error("Failed to load toppings");
+      }
+      const data = await response.json();
+      const toppingsData: Topping[] = data.data;
+      setToppings(toppingsData);
+
+      console.log("Fetched toppings:", toppingsData);
+    }
+    
+    fetchToppings();
+  }, []);
 
   const handleToppingSelect = (topping: Topping) => {
     setSelectedToppings((prev) =>
       prev.includes(topping)
-        ? prev.filter((t) => t.id !== topping.id)
+        ? prev.filter((t) => t._id !== topping._id)
         : [...prev, topping]
     );
   };
@@ -32,7 +38,7 @@ const ToppingList = ({ toppings }: ToppingProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {toppings.map((topping) => (
             <ToppingCard
-              key={topping.id}
+              key={topping._id}
               topping={topping}
               selectedToppings={selectedToppings}
               handleToppingSelect={handleToppingSelect}

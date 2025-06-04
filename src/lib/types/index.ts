@@ -7,7 +7,7 @@ export interface Tenant {
 export interface IPriceConfiguration {
   [key: string]: {
     priceType: "base" | "additional";
-    availableOptions: Array<string> | Map<string, number>;
+    availableOptions: Array<string>;
   };
 }
 
@@ -43,3 +43,16 @@ export interface Product {
   attributeConfiguration: Array<IAttributeConfigurationValue>;
 }
 
+
+export type Topping = {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+  tenantId: string;
+  isPublished: boolean;
+};
+
+export type ToppingProps = {
+  toppings: Topping[];
+};
