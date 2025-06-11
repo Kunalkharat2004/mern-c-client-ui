@@ -11,6 +11,15 @@ export interface IPriceConfiguration {
   };
 }
 
+export interface IProductPriceConfiguration {
+  [key: string]: {
+    priceType: "base" | "additional";
+    availableOptions: {
+      [key: string]: number;
+    };
+  };
+}
+
 export interface IAttributeConfiguration {
   name: string;
   widgetType: "radio" | "switch";
@@ -39,7 +48,7 @@ export interface Product {
   isPublished: boolean;
   tenantId: string;
   categoryId: string;
-  priceConfiguration: IPriceConfiguration;
+  priceConfiguration: IProductPriceConfiguration;
   attributeConfiguration: Array<IAttributeConfigurationValue>;
 }
 

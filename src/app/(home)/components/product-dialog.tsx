@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import React, { Suspense } from "react";
+import React, { Suspense, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
@@ -72,6 +72,16 @@ const ProductDialog = ({ product }: ProductProps) => {
 
     dispatch(addToCart(cartPayload));
   };
+  const totalPrice = useMemo(() => {
+     const selectedToppingsTotal = selectedToppings.reduce((toppingSum, topping)=> toppingSum + topping.price, 0);
+    const choosenConfigPrice = Object.entries(choosenConfig).reduce((sum, [key, value]) => {
+      return sum += product.priceConfiguration[key].availableOptions[value] || 0;
+    }, 0)
+    return choosenConfigPrice + selectedToppingsTotal;
+  },[choosenConfig, selectedToppings, product]);
+  
+ 
+
   return (
     <Dialog>
       <DialogTrigger className={primaryButtonClasses}>Choose</DialogTrigger>
@@ -139,7 +149,12 @@ const ProductDialog = ({ product }: ProductProps) => {
                               {option}
                             </span>
                             <span className="text-xs sm:text-sm text-gray-700 mt-1">
-                              ₹{199}
+                              ₹199
+                              {/* {
+                                Object.entries(product.priceConfiguration).reduce((sum,[key,value]) => {
+                                  return sum += value.availableOptions.includes(option) ? value.availableOptions[option]:0
+                                },0)
+                              } */}
                             </span>
                           </Label>
                         </div>
@@ -161,7 +176,9 @@ const ProductDialog = ({ product }: ProductProps) => {
             <div className="flex items-center justify-between mt-8 lg:mt-12">
               <p className="text-sm sm:text-base font-semibold mt-1">
                 Total Price:{" "}
-                <span className="font-semibold text-primary">₹{11}</span>
+                <span className="font-semibold text-primary">
+                  ₹{totalPrice}
+                </span>
               </p>
 
               <Button
