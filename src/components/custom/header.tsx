@@ -16,10 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import TenantSelect from "./tenant-select";
-import CartCounter from "./cart-counter";
+import CartCounterClient from "./cart-counter-client";
 
 
-const Header = async() => {
+const Header = async () => {
+  
+
 
   return (
     <header className="bg-white shadow-sm">
@@ -54,7 +56,7 @@ const Header = async() => {
             >
               Orders
             </Link>
-           <CartCounter/>
+            <CartCounterClient />
           </div>
 
           <div className="flex items-center gap-4">
@@ -71,7 +73,7 @@ const Header = async() => {
         {/* Mobile Navigation (Dropdown Menu) - visible only on small screens */}
         <div className="md:hidden flex items-center gap-4">
           {/* Shopping Basket on Mobile (remains outside dropdown for quick access) */}
-          <CartCounter/>
+          <CartCounterClient />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
