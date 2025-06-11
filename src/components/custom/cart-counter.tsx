@@ -3,14 +3,16 @@ import { ShoppingBasket } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 import { Badge } from '../ui/badge';
+import { useAppSelector } from '@/lib/store/hooks';
 
 const CartCounter = () => {
 
+    const cartCount = useAppSelector((state) => state.cart.cartItems);
   return (
     <>
       <span className="relative">
-              <Badge className="absolute -top-3 -right-4 rounded-full">
-                  3
+        <Badge className="absolute -top-3 -right-4 rounded-full">
+          {cartCount.length}
         </Badge>
         <Link
           href={"/cart"}
