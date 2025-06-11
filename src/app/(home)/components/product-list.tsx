@@ -18,7 +18,6 @@ const ProductList = async() => {
     <section>
       <div className="container py-12 mx-auto max-w-7xl px-4">
         <Tabs defaultValue={categories[0]?._id} className="w-full">
-          {/* Tab triggers */}
           <TabsList>
             {categories.map((category) => (
               <TabsTrigger
@@ -30,8 +29,6 @@ const ProductList = async() => {
               </TabsTrigger>
             ))}
           </TabsList>
-
-          {/* Tab contents: each one renders a client-side pagination component */}
           {categories.map((category) => (
             <TabsContent
               key={category._id}

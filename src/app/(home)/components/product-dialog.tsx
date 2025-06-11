@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ShoppingCart } from 'lucide-react';
@@ -48,22 +48,21 @@ const ProductDialog = ({ product }: ProductProps) => {
               </p>
             </div>
 
-            {
-              Object.entries(product.category.priceConfiguration)
-                .sort(([keyA,valueA],[keyB,valueB]) => {
-                  if (
-                    valueA.priceType === "base" &&
-                    valueB.priceType === "additional"
-                  )
-                    return -1; // valueA (base) comes before valueB (additional)
-                  else if (
-                    valueA.priceType === "additional" &&
-                    valueB.priceType === "base"
-                  )
-                    return 1; // valueA (additional) comes after valueB (base)
-                  else return 0;
-                })
-                .map(([key, value]) => {
+            {Object.entries(product.category.priceConfiguration)
+              .sort(([keyA, valueA], [keyB, valueB]) => {
+                if (
+                  valueA.priceType === "base" &&
+                  valueB.priceType === "additional"
+                )
+                  return -1; // valueA (base) comes before valueB (additional)
+                else if (
+                  valueA.priceType === "additional" &&
+                  valueB.priceType === "base"
+                )
+                  return 1; // valueA (additional) comes after valueB (base)
+                else return 0;
+              })
+              .map(([key, value]) => {
                 return (
                   <div key={key} className="mt-6">
                     <h4 className="text-lg font-semibold mb-3">
@@ -73,7 +72,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                       defaultValue={value.availableOptions[0]}
                       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
                     >
-                      {value.availableOptions.map((option:string) => (
+                      {value.availableOptions.map((option: string) => (
                         <div key={option}>
                           <RadioGroupItem
                             value={option}
@@ -83,7 +82,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                           />
                           <Label
                             htmlFor={option}
-                            className="flex flex-col items-center justify-center rounded-md border-2 bg-white p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors duration-200 h-full text-center"
+                            className="flex flex-col items-center justify-center rounded-md border-2 bg-white p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer h-full text-center"
                           >
                             <span className="text-sm sm:text-base font-semibold">
                               {option}
@@ -97,12 +96,13 @@ const ProductDialog = ({ product }: ProductProps) => {
                     </RadioGroup>
                   </div>
                 );
-              })
-            }
+              })}
 
-            <div className="mt-6">
-              <ToppingList />
-            </div>
+            {/* <div className="mt-6"> */}
+              <Suspense fallback={"Loading toppings..."}>
+                <ToppingList />
+              </Suspense>
+            {/* </div> */}
 
             <div className="flex items-center justify-between mt-8 lg:mt-12">
               <p className="text-sm sm:text-base font-semibold mt-1">
@@ -115,7 +115,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                   "cursor-pointer flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold",
                   primaryButtonClasses
                 )}
-                onClick={()=> handleAddToCart(product)}
+                onClick={() => handleAddToCart(product)}
               >
                 <ShoppingCart size={20} />
                 Add to Cart

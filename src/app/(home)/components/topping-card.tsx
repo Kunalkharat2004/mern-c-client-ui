@@ -19,7 +19,7 @@ const ToppingCard = ({ topping, selectedToppings, handleToppingSelect }: Topping
   return (
     <Card
       className={cn(
-        "cursor-pointer bg-white hover:bg-accent hover:text-accent-foreground transition-colors duration-200 shadow-sm",
+        "cursor-pointer bg-white hover:bg-accent hover:text-accent-foreground shadow-sm",
         selectedToppings?.some((t) => t._id === topping._id)
           ? "border-2 border-primary relative"
           : ""

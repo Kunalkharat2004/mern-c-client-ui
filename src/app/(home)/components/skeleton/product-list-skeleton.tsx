@@ -24,7 +24,7 @@ const ProductListSkeleton = () => {
               {[...Array(4)].map(
                 (
                   _,
-                  index // Show 8 card skeletons as an example
+                  index // Show 4 card skeletons as an example
                 ) => (
                   <ProductCardSkeleton key={index} />
                 )
