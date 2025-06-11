@@ -2,15 +2,20 @@ import React, { useEffect } from "react";
 import ToppingCard from "./topping-card";
 import { Topping } from "@/lib/types";
 
-
-const ToppingList = () => {
-
+const ToppingList = ({
+  selectedToppings,
+  handleToppingSelect,
+}: {
+  selectedToppings: Topping[];
+  handleToppingSelect: (topping: Topping) => void;
+}) => {
   const [toppings, setToppings] = React.useState<Topping[]>([]);
-  const [selectedToppings, setSelectedToppings] = React.useState<Topping[]>([]);
 
   useEffect(() => {
     const fetchToppings = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/toppings?tenantId=2adeb26a-266e-4ff4-8b0b-ec79cefdfaf7`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/toppings?tenantId=2adeb26a-266e-4ff4-8b0b-ec79cefdfaf7`
+      );
       if (!response.ok) {
         throw new Error("Failed to load toppings");
       }
@@ -19,18 +24,11 @@ const ToppingList = () => {
       setToppings(toppingsData);
 
       console.log("Fetched toppings:", toppingsData);
-    }
-    
+    };
+
     fetchToppings();
   }, []);
 
-  const handleToppingSelect = (topping: Topping) => {
-    setSelectedToppings((prev) =>
-      prev.includes(topping)
-        ? prev.filter((t) => t._id !== topping._id)
-        : [...prev, topping]
-    );
-  };
   return (
     <section className="w-full">
       <div className="mt-6 px-4 sm:px-6 lg:px-0">

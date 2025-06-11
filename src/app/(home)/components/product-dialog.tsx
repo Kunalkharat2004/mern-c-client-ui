@@ -1,27 +1,77 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { primaryButtonClasses } from '@/app/lib/button-styles';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import Image from 'next/image';
-import React, { Suspense } from 'react'
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ShoppingCart } from 'lucide-react';
-import { Product } from '@/lib/types';
-import ToppingList from './topping-list';
+import { primaryButtonClasses } from "@/app/lib/button-styles";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Image from "next/image";
+import React, { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ShoppingCart } from "lucide-react";
+import { Product, Topping } from "@/lib/types";
+import ToppingList from "./topping-list";
+import { addToCart, CartItems } from "@/lib/store/feature/cart/cart-slice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 type ProductProps = {
   product: Product;
 };
 
+type choosenConfigType = {
+  [key: string]: string;
+};
+
 const ProductDialog = ({ product }: ProductProps) => {
+  /**
 
+       initialChoosenConfig:
+       Ex:
+      {
+        Size: "Small",
+        Crust: "Thin"
+      }
+  
+ */
+  const initialChoosenConfig = Object.entries(
+    product.category.priceConfiguration
+  ).reduce((acc, [key, value]) => {
+    return {
+      ...acc,
+      [key]: value.availableOptions[0],
+    };
+  }, {});
+
+  const [selectedToppings, setSelectedToppings] = React.useState<Topping[]>([]);
+  const [choosenConfig, setChoosenConfig] =
+    React.useState<choosenConfigType>(initialChoosenConfig);
+
+  const dispatch = useAppDispatch();
+
+  const handleToppingSelect = (topping: Topping) => {
+    setSelectedToppings((prev) =>
+      prev.includes(topping)
+        ? prev.filter((t) => t._id !== topping._id)
+        : [...prev, topping]
+    );
+  };
+
+  const handleOnRadioChange = (key: string, data: string) => {
+    setChoosenConfig((prev) => ({
+      ...prev,
+      [key]: data,
+    }));
+  };
   const handleAddToCart = (product: Product) => {
-    console.log("Adding to cart:", product);
-  }
+    const cartPayload: CartItems = {
+      product,
+      choosenConfiguration: {
+        priceConfiguration: choosenConfig!,
+        selectedToppings: selectedToppings,
+      },
+    };
 
-    
+    dispatch(addToCart(cartPayload));
+  };
   return (
     <Dialog>
       <DialogTrigger className={primaryButtonClasses}>Choose</DialogTrigger>
@@ -70,6 +120,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                     </h4>
                     <RadioGroup
                       defaultValue={value.availableOptions[0]}
+                      onValueChange={(data) => handleOnRadioChange(key, data)}
                       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
                     >
                       {value.availableOptions.map((option: string) => (
@@ -99,9 +150,12 @@ const ProductDialog = ({ product }: ProductProps) => {
               })}
 
             {/* <div className="mt-6"> */}
-              <Suspense fallback={"Loading toppings..."}>
-                <ToppingList />
-              </Suspense>
+            <Suspense fallback={"Loading toppings..."}>
+              <ToppingList
+                selectedToppings={selectedToppings}
+                handleToppingSelect={handleToppingSelect}
+              />
+            </Suspense>
             {/* </div> */}
 
             <div className="flex items-center justify-between mt-8 lg:mt-12">
@@ -128,4 +182,4 @@ const ProductDialog = ({ product }: ProductProps) => {
   );
 };
 
-export default ProductDialog
+export default ProductDialog;
