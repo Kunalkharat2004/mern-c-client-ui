@@ -32,6 +32,7 @@ export interface ICategory {
   name: string;
   priceConfiguration: IPriceConfiguration;
   attributeConfiguration: Array<IAttributeConfiguration>;
+  hasToppings: boolean;
 }
 
 export interface IAttributeConfigurationValue {

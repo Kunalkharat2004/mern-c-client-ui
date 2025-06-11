@@ -164,14 +164,16 @@ const ProductDialog = ({ product }: ProductProps) => {
                 );
               })}
 
-            {/* <div className="mt-6"> */}
+            {
+              product.category.hasToppings && (
             <Suspense fallback={"Loading toppings..."}>
               <ToppingList
                 selectedToppings={selectedToppings}
                 handleToppingSelect={handleToppingSelect}
               />
             </Suspense>
-            {/* </div> */}
+              )
+           }
 
             <div className="flex items-center justify-between mt-8 lg:mt-12">
               <p className="text-sm sm:text-base font-semibold mt-1">
