@@ -6,7 +6,6 @@ import ProductListSkeleton from "./components/skeleton/product-list-skeleton";
 
 export default async function Home() {
 
-
   return (
     <>
       <section className="bg-white">

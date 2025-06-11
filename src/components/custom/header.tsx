@@ -9,15 +9,14 @@ import {
 
 import {
   Phone,
-  ShoppingBasket,
   MenuIcon,
   UtensilsCrossed,
   ClipboardList,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import TenantSelect from "./tenant-select";
+import CartCounter from "./cart-counter";
 
 
 const Header = async() => {
@@ -55,15 +54,7 @@ const Header = async() => {
             >
               Orders
             </Link>
-            <span className="relative">
-              <Badge className="absolute -top-3 -right-4 rounded-full">3</Badge>
-              <Link
-                href={"/cart"}
-                className="text-gray-700 hover:text-primary transition-colors duration-200"
-              >
-                <ShoppingBasket className="hover:text-primary hover:cursor-pointer" />
-              </Link>
-            </span>
+           <CartCounter/>
           </div>
 
           <div className="flex items-center gap-4">
@@ -80,15 +71,7 @@ const Header = async() => {
         {/* Mobile Navigation (Dropdown Menu) - visible only on small screens */}
         <div className="md:hidden flex items-center gap-4">
           {/* Shopping Basket on Mobile (remains outside dropdown for quick access) */}
-          <span className="relative">
-            <Badge className="absolute -top-3 -right-4 rounded-full">3</Badge>
-            <Link
-              href={"/cart"}
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              <ShoppingBasket className="hover:text-primary hover:cursor-pointer" />
-            </Link>
-          </span>
+          <CartCounter/>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
