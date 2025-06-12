@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useTransition } from "react";
 import debounce from "lodash/debounce";
 import { cn } from "@/lib/utils";
 import Spinner from "@/components/ui/spinner";
 import { Tenant } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const TenantSelect = () => {
   const [open, setOpen] = useState(false);
@@ -26,12 +27,15 @@ const TenantSelect = () => {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [initializing, setInitializing] = useState(true);
 
-  // Use NEXT_PUBLIC_ for client-side environment variables
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3200";
 
-  // Function to fetch tenants with optional search query and limit
   const fetchTenants = useCallback(
     async (query = "", limit = 5) => {
       setLoading(true);
@@ -41,71 +45,111 @@ const TenantSelect = () => {
               query
             )}&page=1&limit=${limit}`
           : `${BACKEND_URL}/api/auth/tenant?page=1&limit=${limit}`;
-
-        const fetchTenantsResponse = await fetch(url, {
-            next: { revalidate: 300 }, // Revalidate every 5 minutes
-        });
-
-        if (!fetchTenantsResponse.ok) {
-          throw new Error("Failed to fetch tenants data");
-        }
-        const result = await fetchTenantsResponse.json();
-        setTenants(result.data);
-      } catch (error) {
-        console.error("Error fetching tenants:", error);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch tenants");
+        const result = await res.json();
+        setTenants(result.data || []);
+      } catch (err) {
+        console.error(err);
         setTenants([]);
       } finally {
         setLoading(false);
       }
     },
     [BACKEND_URL]
-    );
-    
-    // console.log("Tenants fetched:", tenants); // Debugging log to see fetched tenants
+  );
 
-  // Debounced version of fetchTenants for search input
-  // Fetch more results for search (e.g., limit=20 or higher, depending on how many you want to display for search)
-  const debouncedFetchTenants = useCallback(
-    debounce((query: string) => fetchTenants(query, 20), 500),
+  const fetchTenantById = useCallback(
+    async (id: string) => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/auth/tenant/${id}`);
+        const result = await res.json();
+        console.log("fetchTenantById result:", result);
+        return result.data || result.tenant || result;
+      } catch (err) {
+        console.error("Error fetching tenant by ID:", err);
+        return null;
+      }
+    },
+    [BACKEND_URL]
+  );
+
+  const debouncedFetch = useCallback(
+    debounce((q: string) => fetchTenants(q, 20), 500),
     [fetchTenants]
   );
 
-  // Effect for initial load (when component mounts)
+  // Initialize selection from URL or localStorage
   useEffect(() => {
-    fetchTenants("", 5); // Load initial 5 tenants
+    const id = searchParams.get("restaurantId");
+    if (id) {
+      // if a matching tenant in localStorage, use it immediately
+      const saved = localStorage.getItem("selectedTenant");
+      if (saved) {
+        try {
+          const parsed: Tenant = JSON.parse(saved);
+          if (parsed.id === id) {
+            setSelectedTenant(parsed);
+            setInitializing(false);
+            return;
+          }
+        } catch {}
+      }
+      // otherwise fetch from backend
+      setLoading(true);
+      fetchTenantById(id).then((tenant) => {
+        if (tenant) {
+          setSelectedTenant(tenant);
+          localStorage.setItem("selectedTenant", JSON.stringify(tenant));
+        } else {
+          setSelectedTenant(null);
+          localStorage.removeItem("selectedTenant");
+        }
+        setLoading(false);
+        setInitializing(false);
+      });
+    } else {
+      setSelectedTenant(null);
+      localStorage.removeItem("selectedTenant");
+      setInitializing(false);
+    }
+  }, [searchParams, fetchTenantById]);
+
+  useEffect(() => {
+    fetchTenants();
   }, [fetchTenants]);
 
-  // Effect for handling search query changes
   useEffect(() => {
-    if (searchQuery) {
-      debouncedFetchTenants(searchQuery);
-    } else {
-      // If search query is cleared, re-fetch initial 5
-      fetchTenants("", 5);
-    }
-  }, [searchQuery, debouncedFetchTenants, fetchTenants]);
+    if (searchQuery) debouncedFetch(searchQuery);
+    else fetchTenants();
+  }, [searchQuery, debouncedFetch, fetchTenants]);
 
-  // Optional: Function to fetch a single tenant by ID (if additional details are needed after selection)
-  // You might call this if `selectedTenant` needs more properties than what's in the initial list.
-//   const fetchTenantById = useCallback(
-//     async (id: string) => {
-//       try {
-//         const data = await fetch(`${BACKEND_URL}/api/auth/tenant/${id}`, {
-//           cache: "no-store",
-//         });
-//         if (!data.ok) {
-//           throw new Error(`Failed to fetch tenant with ID: ${id}`);
-//         }
-//         const tenant = await data.json();
-//         console.log("Fetched tenant by ID:", tenant);
-//         // If needed, update selectedTenant with the full data from this specific fetch
-//         // setSelectedTenant(tenant.data);
-//       } catch (error) {
-//         console.error("Error fetching tenant by ID:", error);
-//       }
-//     },
-//     [BACKEND_URL]
-//   );
+  const handleSelect = (tenant: Tenant) => {
+    setSelectedTenant(tenant);
+    localStorage.setItem("selectedTenant", JSON.stringify(tenant));
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams);
+      params.set("restaurantId", tenant.id);
+      router.push(`/?${params.toString()}`);
+    });
+    setOpen(false);
+    setSearchQuery("");
+  };
+
+  const getButtonContent = () => {
+    if (initializing) {
+      return "Select Restaurant...";
+    }
+    if (loading || isPending) {
+      return (
+        <>
+          <Spinner />
+          Loading…
+        </>
+      );
+    }
+    return selectedTenant?.name ?? "Select Restaurant...";
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -114,9 +158,13 @@ const TenantSelect = () => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          disabled={initializing || isPending}
+          className={cn(
+            "w-[200px] justify-between",
+            (initializing || isPending) && "opacity-50"
+          )}
         >
-          {selectedTenant ? selectedTenant.name : "Select Restaurant..."}
+          {getButtonContent()}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -130,35 +178,29 @@ const TenantSelect = () => {
           <CommandList>
             {loading ? (
               <CommandEmpty>
-                <Spinner /> {/* Display spinner while loading */}
+                <Spinner />
               </CommandEmpty>
             ) : tenants.length === 0 && searchQuery ? (
-              <CommandEmpty>No results found for `{searchQuery}`.</CommandEmpty>
-            ) : tenants.length === 0 && !searchQuery ? (
+              <CommandEmpty>No results for “{searchQuery}”.</CommandEmpty>
+            ) : tenants.length === 0 ? (
               <CommandEmpty>No restaurants available.</CommandEmpty>
             ) : null}
-
             <CommandGroup>
-              {tenants.map((tenant) => (
+              {tenants.map((t) => (
                 <CommandItem
-                  key={tenant.id}
-                  value={tenant.id}
-                  onSelect={() => {
-                    setSelectedTenant(tenant);
-                    // fetchTenantById(tenant.id); // Optional: fetch full details
-                    setOpen(false); // Close popover
-                    setSearchQuery(""); // Clear search query after selection
-                  }}
+                  key={t.id}
+                  value={t.id}
+                  onSelect={() => handleSelect(t)}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedTenant?.id === tenant.id
+                      selectedTenant?.id === t.id
                         ? "opacity-100 text-primary"
                         : "opacity-0"
                     )}
                   />
-                  {tenant.name}
+                  {t.name}
                 </CommandItem>
               ))}
             </CommandGroup>

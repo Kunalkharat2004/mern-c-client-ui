@@ -10,7 +10,6 @@ export function cn(...inputs: ClassValue[]) {
 
 export const hashPayload = (payload: CartItems): string => {
   const hash = crypto.createHash("sha256").update(JSON.stringify({...payload, qty: undefined})).digest("hex");
-  console.log("Hash of payload:", hash);
   return hash;
 }
  

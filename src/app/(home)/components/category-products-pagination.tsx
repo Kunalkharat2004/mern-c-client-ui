@@ -33,10 +33,10 @@ interface CachedPage {
 }
 
 /**
- * 1) cacheStore: same as before, top‐level key is categoryId, second‐level key is page number.
+ * 1) cacheStore: top‐level key is `${tenantId}-${categoryId}`, second‐level key is page number.
  *    Each entry: { products, timestamp }.
  *
- * 2) totalCountStore: top‐level key is categoryId → number of total products in that category.
+ * 2) totalCountStore: top‐level key is `${tenantId}-${categoryId}` → number of total products in that category.
  */
 const cacheStore: Record<string, Record<number, CachedPage>> = {};
 const totalCountStore: Record<string, number> = {};
@@ -54,31 +54,38 @@ export default function CategoryProductsPagination({
   const totalPages = Math.ceil(totalCount / pageSize);
   const CACHE_TTL = 3600 * 1000; // 1 hour in milliseconds
 
-  // Whenever categoryId changes, reset to page 1:
+  // Create a unique cache key that includes both tenantId and categoryId
+  const cacheKey = `${tenantId}-${categoryId}`;
+
+  // Whenever categoryId or tenantId changes, reset to page 1:
   useEffect(() => {
     setPage(1);
-  }, [categoryId]);
+    setProducts([]);
+    setTotalCount(0);
+  }, [categoryId, tenantId]);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchPage() {
-      // Ensure we have a cache bucket for this categoryId
-      if (!cacheStore[categoryId]) {
-        cacheStore[categoryId] = {};
+      // Ensure we have a cache bucket for this tenant-category combination
+      if (!cacheStore[cacheKey]) {
+        cacheStore[cacheKey] = {};
       }
 
-      const categoryCache = cacheStore[categoryId];
+      const categoryCache = cacheStore[cacheKey];
       const cachedEntry = categoryCache[page];
 
       // 1) If cache exists and is still fresh:
       if (cachedEntry && Date.now() - cachedEntry.timestamp < CACHE_TTL) {
         if (isMounted) {
-          console.log(`[CACHE HIT] category=${categoryId} page=${page}`);
+          console.log(
+            `[CACHE HIT] tenant=${tenantId} category=${categoryId} page=${page}`
+          );
           setProducts(cachedEntry.products);
 
           // Restore totalCount from totalCountStore if possible:
-          const savedTotal = totalCountStore[categoryId];
+          const savedTotal = totalCountStore[cacheKey];
           if (typeof savedTotal === "number") {
             setTotalCount(savedTotal);
           }
@@ -88,7 +95,9 @@ export default function CategoryProductsPagination({
       }
 
       // 2) Otherwise, fetch fresh data:
-      console.log(`[FETCHING] category=${categoryId} page=${page}`);
+      console.log(
+        `[FETCHING] tenant=${tenantId} category=${categoryId} page=${page}`
+      );
       setLoadingNewPage(true);
 
       try {
@@ -97,11 +106,7 @@ export default function CategoryProductsPagination({
             `?tenantId=${tenantId}` +
             `&categoryId=${categoryId}` +
             `&limit=${pageSize}` +
-            `&page=${page}`,
-          {
-            // Note: next: { revalidate: 3600 } only applies to server‐side data fetching.
-            // This fetch runs on the client, so that option is ignored here.
-          }
+            `&page=${page}`
         );
         if (!res.ok) throw new Error("Failed to fetch products");
 
@@ -112,9 +117,9 @@ export default function CategoryProductsPagination({
         setTotalCount(json.total);
 
         // Store totalCount in module‐level store:
-        totalCountStore[categoryId] = json.total;
+        totalCountStore[cacheKey] = json.total;
 
-        // Cache this page’s products + timestamp
+        // Cache this page's products + timestamp
         categoryCache[page] = {
           products: json.data,
           timestamp: Date.now(),
@@ -122,6 +127,10 @@ export default function CategoryProductsPagination({
       } catch (err) {
         console.error("Error fetching products:", err);
         // You could choose to fall back to a stale cache here if desired.
+        if (isMounted) {
+          setProducts([]);
+          setTotalCount(0);
+        }
       } finally {
         if (isMounted) setLoadingNewPage(false);
       }
@@ -131,21 +140,21 @@ export default function CategoryProductsPagination({
     return () => {
       isMounted = false;
     };
-  }, [categoryId, page, pageSize, tenantId]);
+  }, [categoryId, page, pageSize, tenantId, cacheKey]);
 
   const goToPage = (n: number) => {
     if (n < 1 || n > totalPages) return;
     setPage(n);
   };
 
-  // Build array of page numbers (with “…” if needed)
+  // Build array of page numbers (with "…" if needed)
   const renderPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
     const maxPageButtons = 5;
 
     if (totalPages === 0) return [];
 
-    // Always show “1”
+    // Always show "1"
     pageNumbers.push(1);
 
     if (totalPages > 1) {
@@ -198,14 +207,19 @@ export default function CategoryProductsPagination({
           products.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))
-        ) : (
-          <p className="col-span-full text-center text-gray-500 py-8">
-            No products found in this category.
-          </p>
-        )}
+        ) : !loadingNewPage ? (
+          <div className="col-span-full text-center py-8">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="text-4xl">📦</div>
+              <p className="text-gray-500">
+                No products found in this category.
+              </p>
+            </div>
+          </div>
+        ) : null}
       </div>
 
-      {/* Pagination controls (only if there’s at least one page) */}
+      {/* Pagination controls (only if there's at least one page) */}
       {totalPages > 0 && (
         <Pagination className="py-4">
           <PaginationContent>

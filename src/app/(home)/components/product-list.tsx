@@ -1,51 +1,60 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import React from 'react'
-import CategoryProductsPagination from './category-products-pagination';
-import { ICategory } from '@/lib/types';
+import React from "react";
+import { ICategory } from "@/lib/types";
+import ClientProductListWrapper from "./client-product-list-wrapper";
 
-const ProductList = async() => {
-  // 1) Fetch categories on the server
-  const categoriesRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/categories`,
-    { next: { revalidate: 3600 } } // Cache for 1 hour
-  );
-  if (!categoriesRes.ok) {
-    throw new Error("Failed to load categories");
-  }
+const ProductList = async ({ restaurantId }: { restaurantId: string }) => {
+  try {
+    // Server-side initial data fetch
+    const categoriesRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/categories?tenantId=${restaurantId}`,
+      {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!categoriesRes.ok) {
+      throw new Error("Failed to load categories");
+    }
+
     const categories: ICategory[] = await categoriesRes.json();
-    
-  return (
-    <section>
-      <div className="container py-12 mx-auto max-w-7xl px-4">
-        <Tabs defaultValue={categories[0]?._id} className="w-full">
-          <TabsList>
-            {categories.map((category) => (
-              <TabsTrigger
-                key={category._id}
-                value={category._id}
-                className="text-md cursor-pointer"
-              >
-                {category.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {categories.map((category) => (
-            <TabsContent
-              key={category._id}
-              value={category._id}
-              className="pt-6"
-            >
-              <CategoryProductsPagination
-                categoryId={category._id}
-                tenantId="2adeb26a-266e-4ff4-8b0b-ec79cefdfaf7"
-                pageSize={12} // ← 12 product per “page”
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
-    </section>
-  );
-}
 
-export default ProductList
+    if (!categories.length) {
+      return (
+        <section>
+          <div className="container py-12 mx-auto max-w-7xl px-4 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="text-4xl">📋</div>
+              <p className="text-lg text-gray-600">
+                No categories found for this restaurant.
+              </p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Pass initial server-rendered data to client wrapper
+    return (
+      <ClientProductListWrapper
+        initialCategories={categories}
+        restaurantId={restaurantId}
+      />
+    );
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return (
+      <section>
+        <div className="container py-12 mx-auto max-w-7xl px-4 text-center">
+          <p className="text-lg text-red-600">
+            Failed to load categories. Please try again.
+          </p>
+        </div>
+      </section>
+    );
+  }
+};
+
+export default ProductList;

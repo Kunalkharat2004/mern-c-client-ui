@@ -104,7 +104,6 @@ const ProductDialog = ({ product }: ProductProps) => {
       qty: 1
     };
 
-    console.log("Adding to cart:", cartPayload);
     dispatch(addToCart(cartPayload));
     setIsDialogOpen(false);
     setSelectedToppings([]);
