@@ -6,12 +6,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import React, { Suspense, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, hashPayload } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
 import { Product, Topping } from "@/lib/types";
 import ToppingList from "./topping-list";
 import { addToCart, CartItems } from "@/lib/store/feature/cart/cart-slice";
-import { useAppDispatch } from "@/lib/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
 type ProductProps = {
   product: Product;
@@ -46,12 +46,21 @@ const ProductDialog = ({ product }: ProductProps) => {
     React.useState<choosenConfigType>(initialChoosenConfig);
 
   const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart.cartItems);
 
   const handleToppingSelect = (topping: Topping) => {
-    setSelectedToppings((prev) =>
-      prev.includes(topping)
+    setSelectedToppings((prev) => {
+      
+      const updated = prev.find(t => t._id === topping._id)
         ? prev.filter((t) => t._id !== topping._id)
         : [...prev, topping]
+      
+      return [...updated].sort((a, b) => {
+        const timeA = new Date(a.createdAt).getTime();
+        const timeB = new Date(b.createdAt).getTime();
+        return timeA - timeB; // Sort by createdAt in ascending order, so that toppings created first appear first in the list
+      });
+    }
     );
   };
 
@@ -61,14 +70,38 @@ const ProductDialog = ({ product }: ProductProps) => {
       [key]: data,
     }));
   };
+
+  const isConfigAlreadyExists = useMemo(() => {
+    const currentConfig:CartItems = {
+      _id: product._id,
+      name: product.name,
+      image: product.image,
+      priceConfiguration: product.priceConfiguration,
+      choosenConfiguration: {
+        priceConfiguration: choosenConfig,
+        selectedToppings: selectedToppings,
+      },
+      qty: 1
+    }
+    console.log("Current Config:", currentConfig);
+    const hash = hashPayload(currentConfig);
+    return cartItems.some((item) => item.hash === hash);
+  }, [product, choosenConfig, selectedToppings, cartItems]);
+  
   const handleAddToCart = (product: Product) => {
     const cartPayload: CartItems = {
-      product,
+      _id: product._id,
+      name: product.name,
+      image: product.image,
+      priceConfiguration: product.priceConfiguration,
       choosenConfiguration: {
         priceConfiguration: choosenConfig!,
         selectedToppings: selectedToppings,
       },
+      qty: 1
     };
+
+    console.log("Adding to cart:", cartPayload);
 
     dispatch(addToCart(cartPayload));
   };
@@ -164,16 +197,14 @@ const ProductDialog = ({ product }: ProductProps) => {
                 );
               })}
 
-            {
-              product.category.hasToppings && (
-            <Suspense fallback={"Loading toppings..."}>
-              <ToppingList
-                selectedToppings={selectedToppings}
-                handleToppingSelect={handleToppingSelect}
-              />
-            </Suspense>
-              )
-           }
+            {product.category.hasToppings && (
+              <Suspense fallback={"Loading toppings..."}>
+                <ToppingList
+                  selectedToppings={selectedToppings}
+                  handleToppingSelect={handleToppingSelect}
+                />
+              </Suspense>
+            )}
 
             <div className="flex items-center justify-between mt-8 lg:mt-12">
               <p className="text-sm sm:text-base font-semibold mt-1">
@@ -184,14 +215,18 @@ const ProductDialog = ({ product }: ProductProps) => {
               </p>
 
               <Button
+                disabled={isConfigAlreadyExists}
                 className={cn(
-                  "cursor-pointer flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold",
-                  primaryButtonClasses
+                  primaryButtonClasses,
+                  `flex items-center justify-center bg-primary text-white hover:bg-primary/90 transition-colors duration-200 rounded-full px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold`,
+                  isConfigAlreadyExists
+                    ? "cursor-not-allowed bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700"
+                    : "cursor-pointer bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 focus:ring-orange-300"
                 )}
                 onClick={() => handleAddToCart(product)}
               >
                 <ShoppingCart size={20} />
-                Add to Cart
+                {isConfigAlreadyExists ? "Already in cart" : "Add to Cart"}
               </Button>
             </div>
           </div>

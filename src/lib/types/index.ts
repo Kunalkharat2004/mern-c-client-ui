@@ -61,6 +61,7 @@ export type Topping = {
   image: string;
   tenantId: string;
   isPublished: boolean;
+  createdAt: Date;
 };
 
 export type ToppingProps = {

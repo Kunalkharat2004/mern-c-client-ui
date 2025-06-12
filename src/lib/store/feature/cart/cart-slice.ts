@@ -1,15 +1,17 @@
 import { Product, Topping } from "@/lib/types";
+import { hashPayload } from "@/lib/utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface CartItems {
-    product: Product;
+export interface CartItems extends Pick<Product, "_id" | "name" | "image" | "priceConfiguration"> {
     choosenConfiguration: {
         priceConfiguration: {
             [key: string]: string;
         };
         selectedToppings: Topping[];
-    }
+  },
+  qty: number;
+  hash?: string;
 }
 
 export interface CartState {
@@ -24,17 +26,10 @@ export const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-      addToCart: (state:CartState, action: PayloadAction<CartItems>) => {
-
-        const newItem = {
-          product: action.payload.product,
-          choosenConfiguration: {
-            priceConfiguration:
-              action.payload.choosenConfiguration.priceConfiguration,
-            selectedToppings:
-              action.payload.choosenConfiguration.selectedToppings,
-          },
-          };
+    addToCart: (state: CartState, action: PayloadAction<CartItems>) => {
+      
+      const hash = hashPayload(action.payload);
+        const newItem = {...action.payload, hash};
           
           // Persist the cart in localStorage
           window.localStorage.setItem("cartItems", JSON.stringify([...state.cartItems, newItem]));
