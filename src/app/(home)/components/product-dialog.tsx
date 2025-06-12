@@ -121,7 +121,12 @@ const ProductDialog = ({ product }: ProductProps) => {
  
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog open={isDialogOpen} onOpenChange={(open) => {
+      setIsDialogOpen(open);
+      if(!open) {
+        setSelectedToppings([]);
+      }
+    }}>
       <DialogTrigger className={primaryButtonClasses}>Choose</DialogTrigger>
       <DialogContent className="max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-4xl p-0">
         <div className="flex flex-col md:flex-row h-[90vh]">
