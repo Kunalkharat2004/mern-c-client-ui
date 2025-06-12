@@ -12,6 +12,7 @@ import { Product, Topping } from "@/lib/types";
 import ToppingList from "./topping-list";
 import { addToCart, CartItems } from "@/lib/store/feature/cart/cart-slice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { useNotification } from "@/app/lib/hooks/useNotification";
 
 type ProductProps = {
   product: Product;
@@ -41,9 +42,12 @@ const ProductDialog = ({ product }: ProductProps) => {
     };
   }, {});
 
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [selectedToppings, setSelectedToppings] = React.useState<Topping[]>([]);
   const [choosenConfig, setChoosenConfig] =
     React.useState<choosenConfigType>(initialChoosenConfig);
+  
+  const {showSuccessToast} = useNotification()
 
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.cartItems);
@@ -83,7 +87,6 @@ const ProductDialog = ({ product }: ProductProps) => {
       },
       qty: 1
     }
-    console.log("Current Config:", currentConfig);
     const hash = hashPayload(currentConfig);
     return cartItems.some((item) => item.hash === hash);
   }, [product, choosenConfig, selectedToppings, cartItems]);
@@ -102,8 +105,10 @@ const ProductDialog = ({ product }: ProductProps) => {
     };
 
     console.log("Adding to cart:", cartPayload);
-
     dispatch(addToCart(cartPayload));
+    setIsDialogOpen(false);
+    setSelectedToppings([]);
+    showSuccessToast("Product added to cart successfully!");
   };
   const totalPrice = useMemo(() => {
      const selectedToppingsTotal = selectedToppings.reduce((toppingSum, topping)=> toppingSum + topping.price, 0);
@@ -116,7 +121,7 @@ const ProductDialog = ({ product }: ProductProps) => {
  
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger className={primaryButtonClasses}>Choose</DialogTrigger>
       <DialogContent className="max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-4xl p-0">
         <div className="flex flex-col md:flex-row h-[90vh]">
