@@ -109,8 +109,16 @@ const TenantSelect = () => {
         setInitializing(false);
       });
     } else {
-      setSelectedTenant(null);
-      localStorage.removeItem("selectedTenant");
+      // No ID in URL: try to load from localStorage
+      const saved = localStorage.getItem("selectedTenant");
+      if (saved) {
+        try {
+          const parsed: Tenant = JSON.parse(saved);
+          setSelectedTenant(parsed);
+        } catch {
+          setSelectedTenant(null);
+        }
+      }
       setInitializing(false);
     }
   }, [searchParams, fetchTenantById]);
