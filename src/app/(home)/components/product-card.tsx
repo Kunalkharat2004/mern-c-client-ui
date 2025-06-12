@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import { Product } from "@/lib/types";
 import ProductDialog from "./product-dialog";
+import { getMinPrice } from "@/lib/utils";
 
 
 
@@ -43,7 +44,7 @@ const ProductCard = ({ product }: ProductProps) => {
       <CardFooter className="flex items-center justify-between p-4 pt-0">
         <p>
           <span className="text-md font-semibold">From: </span>
-          <span className="text-lg font-bold text-primary">₹{199}</span>
+          <span className="text-lg font-bold text-primary">₹{getMinPrice(product)}</span>
         </p>
 
         <ProductDialog product={ product} />
