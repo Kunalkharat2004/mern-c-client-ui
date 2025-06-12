@@ -47,7 +47,7 @@ const ProductDialog = ({ product }: ProductProps) => {
   const [choosenConfig, setChoosenConfig] =
     React.useState<choosenConfigType>(initialChoosenConfig);
   
-  const {showSuccessToast} = useNotification()
+  const {success} = useNotification()
 
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.cartItems);
@@ -108,7 +108,7 @@ const ProductDialog = ({ product }: ProductProps) => {
     dispatch(addToCart(cartPayload));
     setIsDialogOpen(false);
     setSelectedToppings([]);
-    showSuccessToast("Product added to cart successfully!");
+    success("Product added to cart successfully!");
   };
   const totalPrice = useMemo(() => {
      const selectedToppingsTotal = selectedToppings.reduce((toppingSum, topping)=> toppingSum + topping.price, 0);
