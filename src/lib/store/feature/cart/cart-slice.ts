@@ -27,25 +27,62 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state: CartState, action: PayloadAction<CartItems>) => {
-      
       const hash = hashPayload(action.payload);
-        const newItem = {...action.payload, hash};
-          
-          // Persist the cart in localStorage
-          window.localStorage.setItem("cartItems", JSON.stringify([...state.cartItems, newItem]));
+      const newItem = { ...action.payload, hash };
 
-          state.cartItems = [
-              ...state.cartItems,
-                newItem
-        ]
-      },
-      setInitialCart: (state: CartState, action: PayloadAction<CartItems[]>) => { 
-        state.cartItems.push(...action.payload);
+      // Persist the cart in localStorage
+      window.localStorage.setItem(
+        "cartItems",
+        JSON.stringify([...state.cartItems, newItem])
+      );
+
+      state.cartItems = [...state.cartItems, newItem];
+    },
+    setInitialCart: (state: CartState, action: PayloadAction<CartItems[]>) => {
+      state.cartItems.push(...action.payload);
+    },
+    incrementCartItemQty: (state: CartState, action: PayloadAction<string>) => {
+      const itemIndex = state.cartItems.findIndex(item => item._id === action.payload);
+      if (itemIndex !== -1) {
+        state.cartItems[itemIndex].qty += 1;
+
+        // Update localStorage
+        window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
       }
+    },
+    decrementCartItemQty: (state: CartState, action: PayloadAction<string>) => {
+      const itemIndex = state.cartItems.findIndex(item => item._id === action.payload);
+      if (itemIndex !== -1) {
+        if (state.cartItems[itemIndex].qty > 1) {
+          state.cartItems[itemIndex].qty -= 1;
+        } else {
+          // Remove item if qty is 1
+          state.cartItems.splice(itemIndex, 1);
+        }
+
+        // Update localStorage
+        window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      }
+    },
+    deleteCartItem: (state: CartState, action: PayloadAction<string>) => {
+      const itemIndex = state.cartItems.findIndex(item => item._id === action.payload);
+      if (itemIndex !== -1) {
+        state.cartItems.splice(itemIndex, 1);
+
+        // Update localStorage
+        window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      }
+    }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToCart, setInitialCart } = cartSlice.actions;
+export const {
+  addToCart,
+  setInitialCart,
+  incrementCartItemQty,
+  decrementCartItemQty,
+  deleteCartItem,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

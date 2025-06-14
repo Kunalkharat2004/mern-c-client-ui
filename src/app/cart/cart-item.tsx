@@ -6,11 +6,11 @@ import MobileCartItem from './components/mobile-cart-item';
 import EmptyCartMessage from './components/empty-cart-message';
 import { useAppSelector } from '@/lib/store/hooks';
 import { CartItems } from '@/lib/store/feature/cart/cart-slice';
+import OrderSummary from './components/order-summary';
 
 const CartItem = () => {
-    
-      const products:CartItems[] = useAppSelector((state) => state.cart.cartItems);
-      console.log(products);
+
+  const products: CartItems[] = useAppSelector((state) => state.cart.cartItems);
   return (
     <div className="container mx-auto max-w-7xl px-4 py-10">
       {/* Header */}
@@ -20,7 +20,7 @@ const CartItem = () => {
         {/* Cart Items */}
         <div className="lg:col-span-2">
           {/* Desktop Table View */}
-          <DesktopCartTable products={products} />
+          <DesktopCartTable />
 
           {/* Mobile Card View */}
           <div className="md:hidden">
@@ -34,7 +34,7 @@ const CartItem = () => {
         </div>
 
         {/* Order Summary */}
-        {/* <OrderSummary subtotal={subtotal} tax={tax} total={total}/> */}
+        <OrderSummary />
       </div>
 
       {/* Empty Cart Message (if needed) */}

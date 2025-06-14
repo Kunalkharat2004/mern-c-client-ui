@@ -46,3 +46,24 @@ export const getProductPrice = (
   // Return 0 or throw an error if the price isn't found, depending on your error handling preference
   return 0;
 };
+
+export const getCartProductPrice = (product: CartItems):number => {
+  const selectedToppingsTotal =
+    product.choosenConfiguration.selectedToppings.reduce(
+      (toppingSum, topping) => toppingSum + topping.price,
+      0
+    );
+  
+  const selectedPriceConfigurationTotal = Object.entries(product.choosenConfiguration.priceConfiguration).reduce((sum, [key, value]) => {
+    return sum + product.priceConfiguration[key].availableOptions[value]
+  }, 0);
+
+  const total = selectedPriceConfigurationTotal + selectedToppingsTotal;
+  return total;
+};
+
+export const getFinalTotal = (cartItems: CartItems[]): number => { 
+  return cartItems.reduce((total, item) => {
+    return total + (getCartProductPrice(item) * item.qty);
+  }, 0);
+}

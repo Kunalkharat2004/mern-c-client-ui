@@ -1,22 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useAppSelector } from '@/lib/store/hooks';
+import { getFinalTotal } from '@/lib/utils';
 import React from 'react'
 
-interface OrderSummaryProps {
-  subtotal: number;
-  tax: number;
-  total: number;
-//   onProceedToCheckout: () => void;
-//   onContinueShopping: () => void;
-}
 
-
-const OrderSummary: React.FC<OrderSummaryProps> = ({
-    subtotal,
-    tax,
-    total,
-}) => {
+const OrderSummary: React.FC = () => {
+  const products = useAppSelector((state) => state.cart.cartItems);
+  const subtotal = getFinalTotal(products);
+  const tax = Math.round(subtotal * 0.18); // 18% tax
+  const total = subtotal + tax;
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-8 shadow-lg border border-gray-200 rounded-lg">
