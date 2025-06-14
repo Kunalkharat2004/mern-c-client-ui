@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import React, { Suspense, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { cn, hashPayload } from "@/lib/utils";
+import { cn, getProductPrice, hashPayload } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
 import { Product, Topping } from "@/lib/types";
 import ToppingList from "./topping-list";
@@ -191,12 +191,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                               {option}
                             </span>
                             <span className="text-xs sm:text-sm text-gray-700 mt-1">
-                              ₹199
-                              {/* {
-                                Object.entries(product.priceConfiguration).reduce((sum,[key,value]) => {
-                                  return sum += value.availableOptions.includes(option) ? value.availableOptions[option]:0
-                                },0)
-                              } */}
+                              ₹{getProductPrice(product,key,option)}
                             </span>
                           </Label>
                         </div>

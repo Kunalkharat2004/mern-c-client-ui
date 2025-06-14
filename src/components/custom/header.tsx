@@ -20,9 +20,17 @@ import CartCounterClient from "./cart-counter-client";
 
 
 const Header = async () => {
+
+  const tenantFetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/tenant?page=1&limit=500`, {
+    next: { revalidate: 3600 }, // Revalidate every 1hr seconds
+  })
+  if (!tenantFetchResponse.ok) {
+    throw new Error("Failed to fetch tenants");
+  }
   
-
-
+  const restaurants = await tenantFetchResponse.json();
+  console.log("Restaurants fetched:", restaurants);
+  
   return (
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
@@ -38,7 +46,7 @@ const Header = async () => {
           </Link>
 
           {/* Render the Client Component for Tenant Selection */}
-          <TenantSelect />
+          <TenantSelect restaurants={restaurants} />
         </div>
 
         {/* Desktop Navigation and Actions (hidden on small screens) */}
