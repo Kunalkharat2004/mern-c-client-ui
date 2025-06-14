@@ -2,11 +2,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CartItems } from '@/lib/store/feature/cart/cart-slice';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react'
 
-const DesktopCartTable = ({products}) => {
+const DesktopCartTable = ({products}:{products:CartItems[]}) => {
   return (
     <>
       <Card className="hidden md:block shadow-lg border border-gray-200 rounded-lg">
@@ -62,33 +63,39 @@ const DesktopCartTable = ({products}) => {
                           {product.name}
                         </h3>
                         <div className="flex flex-wrap gap-1 mb-2">
-                          <Badge
-                            variant="secondary"
-                            className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700"
-                          >
-                            {product.choosenInfo.priceConfiguration.Size}
-                          </Badge>
-                          <Badge
-                            variant="secondary"
-                            className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700"
-                          >
-                            {product.choosenInfo.priceConfiguration.Crust} Crust
-                          </Badge>
+                          {
+                            Object.entries(product.choosenConfiguration.priceConfiguration)
+                              .filter(([, value]) => {
+                                return value != "None"
+                              })
+                              .map(
+                              ([key, value]) => (
+                                <Badge
+                                  key={key}
+                                  variant="secondary"
+                                  className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700"
+                                >
+                                  {value}
+                                </Badge>
+                              )
+                            )
+                          }
                         </div>
-                        {product.choosenInfo.selectedToppings.length > 0 && (
+                        {product.choosenConfiguration.selectedToppings.length > 0 && (
                           <div>
                             <p className="text-sm text-gray-600 mb-1">
                               Toppings:
                             </p>
                             <div className="flex flex-wrap gap-1">
-                              {product.choosenInfo.selectedToppings.map(
+                              {product.choosenConfiguration.selectedToppings.map(
                                 (topping) => (
                                   <Badge
                                     key={topping._id}
                                     variant="outline"
                                     className="text-xs px-2 py-1 rounded-full border-dashed border-gray-300 text-gray-700"
                                   >
-                                    {topping.name} (+₹{topping.price})
+                                    {/* {topping.name} (+₹{topping.price}) */}
+                                    {topping.name} (+₹{32})
                                   </Badge>
                                 )
                               )}
@@ -99,7 +106,8 @@ const DesktopCartTable = ({products}) => {
                     </div>
                   </TableCell>
                   <TableCell className="text-center font-medium text-gray-700">
-                    ₹{product.price}
+                    {/* ₹{product.price} */}
+                    ₹{32}
                   </TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-2">
@@ -111,7 +119,7 @@ const DesktopCartTable = ({products}) => {
                         <Minus className="h-4 w-4" />
                       </Button>
                       <span className="font-semibold min-w-[2rem] text-center text-gray-800">
-                        {product.quantity}
+                        {product.qty}
                       </span>
                       <Button
                         size="sm"
@@ -123,7 +131,8 @@ const DesktopCartTable = ({products}) => {
                     </div>
                   </TableCell>
                   <TableCell className="text-center font-bold text-xl text-primary">
-                    ₹{product.price * product.quantity}
+                    {/* ₹{product.price * product.quantity} */}
+                    ₹{32 * product.qty}
                   </TableCell>
                   <TableCell className="text-center pr-6">
                     <Button
