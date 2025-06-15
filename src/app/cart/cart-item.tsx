@@ -51,7 +51,9 @@ const CartItem = () => {
             </Button>
             <Button
               variant={"default"}
-              onClick={()=>{}} // Assign the click handler
+              onClick={() => {
+                router.push("/checkout");
+              }} // Assign the click handler
               className="mt-4 md:mt-0 cursor-pointer" // Add some top margin for smaller screens, remove for md+
             >
               Proceed to Checkout
