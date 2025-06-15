@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CartItems, decrementCartItemQty, incrementCartItemQty } from '@/lib/store/feature/cart/cart-slice';
+import { CartItems, decrementCartItemQty, incrementCartItemQty, removeTopping } from '@/lib/store/feature/cart/cart-slice';
 import { useAppDispatch } from '@/lib/store/hooks';
 import { getCartProductPrice } from '@/lib/utils';
 import { Minus, Plus, Trash2 } from 'lucide-react';
@@ -46,16 +46,38 @@ const MobileCartItem = ({product}:{product:CartItems}) => {
               <div className="mb-2">
                 <p className="text-sm text-gray-600 mb-1">Toppings:</p>
                 <div className="flex flex-wrap gap-1">
-                  {product.choosenConfiguration.selectedToppings.map(
-                    (topping) => (
-                      <Badge
-                        key={topping._id}
-                        variant="outline"
-                        className="text-xs px-2 py-1 rounded-full border-dashed border-gray-300 text-gray-700"
-                      >
-                        {topping.name} (+₹{topping.price})
-                      </Badge>
-                    )
+                  {product.choosenConfiguration.selectedToppings.length > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Toppings:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {product.choosenConfiguration.selectedToppings.map(
+                          (topping) => (
+                            <div key={topping._id} className="relative">
+                              <Badge
+                                variant="outline"
+                                className="text-xs px-2 py-1 rounded-full border-dashed border-gray-300 text-gray-700 pr-6" // Add padding-right to make space for the button
+                              >
+                                {topping.name} (+₹{topping.price})
+                              </Badge>
+                              <button
+                                onClick={() =>
+                                  dispatch(
+                                    removeTopping({
+                                      itemId: product._id,
+                                      toppingId: topping._id,
+                                    })
+                                  )
+                                }
+                                className="absolute top-0 right-0 -mt-1 -mr-1 bg-gray-200 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 cursor-pointer"
+                                aria-label={`Remove ${topping.name}`}
+                              >
+                                x
+                              </button>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

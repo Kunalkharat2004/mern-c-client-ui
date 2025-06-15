@@ -72,7 +72,20 @@ export const cartSlice = createSlice({
         // Update localStorage
         window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
       }
-    }
+    },
+    removeTopping: (state: CartState, action: PayloadAction<{itemId: string, toppingId:string}>) => {
+      const { itemId, toppingId } = action.payload;
+      const itemIndex = state.cartItems.findIndex(item => item._id === itemId);
+      if (itemIndex !== -1) {
+        const toppingIndex = state.cartItems[itemIndex].choosenConfiguration.selectedToppings.findIndex(topping => topping._id === toppingId);
+        if (toppingIndex !== -1) {
+          state.cartItems[itemIndex].choosenConfiguration.selectedToppings.splice(toppingIndex, 1);
+
+          // Update localStorage
+          window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+        }
+      }
+    } 
   },
 });
 
@@ -83,6 +96,7 @@ export const {
   incrementCartItemQty,
   decrementCartItemQty,
   deleteCartItem,
+  removeTopping,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

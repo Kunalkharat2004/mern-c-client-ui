@@ -1,13 +1,26 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CartItems, decrementCartItemQty, deleteCartItem, incrementCartItemQty } from '@/lib/store/feature/cart/cart-slice';
-import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
-import { getCartProductPrice } from '@/lib/utils';
-import { Minus, Plus, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import React from 'react'
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  CartItems,
+  decrementCartItemQty,
+  deleteCartItem,
+  incrementCartItemQty,
+  removeTopping,
+} from "@/lib/store/feature/cart/cart-slice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { getCartProductPrice } from "@/lib/utils";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import React from "react";
 
 const DesktopCartTable = () => {
   const products: CartItems[] = useAppSelector((state) => state.cart.cartItems);
@@ -92,13 +105,28 @@ const DesktopCartTable = () => {
                             <div className="flex flex-wrap gap-1">
                               {product.choosenConfiguration.selectedToppings.map(
                                 (topping) => (
-                                  <Badge
-                                    key={topping._id}
-                                    variant="outline"
-                                    className="text-xs px-2 py-1 rounded-full border-dashed border-gray-300 text-gray-700"
-                                  >
-                                    {topping.name} (+₹{topping.price})
-                                  </Badge>
+                                  <div key={topping._id} className="relative">
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs px-2 py-1 rounded-full border-dashed border-gray-300 text-gray-700 pr-6" // Add padding-right to make space for the button
+                                    >
+                                      {topping.name} (+₹{topping.price})
+                                    </Badge>
+                                    <button
+                                      onClick={() =>
+                                        dispatch(
+                                          removeTopping({
+                                            itemId: product._id,
+                                            toppingId: topping._id,
+                                          })
+                                        )
+                                      }
+                                      className="absolute top-0 right-0 -mt-1 -mr-1 bg-gray-200 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 cursor-pointer"
+                                      aria-label={`Remove ${topping.name}`}
+                                    >
+                                      x
+                                    </button>
+                                  </div>
                                 )
                               )}
                             </div>
@@ -158,6 +186,6 @@ const DesktopCartTable = () => {
       </Card>
     </>
   );
-}
+};
 
-export default DesktopCartTable
+export default DesktopCartTable;

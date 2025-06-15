@@ -30,12 +30,12 @@ const Header = async () => {
   
   const restaurants = await tenantFetchResponse.json();
   console.log("Restaurants fetched:", restaurants);
-  
+
   return (
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
         <div className="flex items-center gap-4">
-          <Link href="/">
+          <Link href={`/`}>
             <Image
               src="/homePageIcons/logo.svg"
               alt="Logo"
