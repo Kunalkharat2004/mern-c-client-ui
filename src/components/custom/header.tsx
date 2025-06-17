@@ -7,27 +7,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  Phone,
-  MenuIcon,
-  UtensilsCrossed,
-  ClipboardList,
-} from "lucide-react";
+import { Phone, MenuIcon, UtensilsCrossed, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import TenantSelect from "./tenant-select";
 import CartCounterClient from "./cart-counter-client";
-
+import { getSession } from "@/lib/session";
+import Logout from "./logout";
 
 const Header = async () => {
-
-  const tenantFetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/tenant?page=1&limit=500`, {
-    next: { revalidate: 3600 }, // Revalidate every 1hr seconds
-  })
+  const session = await getSession();
+  const tenantFetchResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/tenant?page=1&limit=500`,
+    {
+      next: { revalidate: 3600 }, // Revalidate every 1hr seconds
+    }
+  );
   if (!tenantFetchResponse.ok) {
     throw new Error("Failed to fetch tenants");
   }
-  
+
   const restaurants = await tenantFetchResponse.json();
 
   return (
@@ -71,9 +70,15 @@ const Header = async () => {
               <Phone size={20} />
               <span className="text-sm">+91-9768328931</span>
             </div>
-            <Button variant="default" className="ml-4 cursor-pointer">
-              Logout
-            </Button>
+            {session ? (
+              <Logout />
+            ) : (
+              <Link href="/login">
+                <Button variant="default" size="sm">
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -108,12 +113,18 @@ const Header = async () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-0 h-auto"
-                >
-                  Logout
-                </Button>
+                {session ? (
+                  <Logout />
+                ) : (
+                  <Link href="/login">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start p-0 h-auto"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                )}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

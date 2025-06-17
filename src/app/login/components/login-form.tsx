@@ -30,6 +30,9 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"form">) {
   const [state, formAction] = useFormState(login, initialState);
+     if (state.type === "success") {
+       window.location.href = "/";
+     }
   return (
     <form action={ formAction} className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
