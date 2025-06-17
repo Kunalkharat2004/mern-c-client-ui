@@ -78,7 +78,7 @@ export default async function login(
       secure: true,
       path: parsedRefresh.Path || "/",
       domain: parsedRefresh.Domain,
-      sameSite: (parsedAccess.SameSite as "strict" | "lax" | "none") || "lax",
+      sameSite: (parsedRefresh.SameSite as "strict" | "lax" | "none") || "strict",
     });
 
     return { type: "success", message: "Login successful." };
