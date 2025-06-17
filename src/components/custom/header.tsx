@@ -74,7 +74,7 @@ const Header = async () => {
               <Logout />
             ) : (
               <Link href="/login">
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" className="ml-4 cursor-pointer">
                   Login
                 </Button>
               </Link>
@@ -119,7 +119,7 @@ const Header = async () => {
                   <Link href="/login">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start p-0 h-auto"
+                      className="w-full justify-start p-0 h-auto cursor-pointer"
                     >
                       Login
                     </Button>

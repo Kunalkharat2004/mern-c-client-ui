@@ -67,3 +67,4 @@ export const getFinalTotal = (cartItems: CartItems[]): number => {
     return total + (getCartProductPrice(item) * item.qty);
   }, 0);
 }
+

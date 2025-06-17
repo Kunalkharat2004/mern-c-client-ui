@@ -67,3 +67,16 @@ export type Topping = {
 export type ToppingProps = {
   toppings: Topping[];
 };
+
+export type ParsedCookie = {
+  accessToken?: string;
+  refreshToken?: string;
+  "Max-Age"?: string;
+  Path?: string;
+  Domain?: string;
+  SameSite?: "strict" | "lax" | "none";
+};
+export type SetCookiesParams = {
+  parsedAccessToken: ParsedCookie;
+  parsedRefreshToken: ParsedCookie;
+};

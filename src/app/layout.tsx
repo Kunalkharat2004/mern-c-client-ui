@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/custom/header";
 import StoreProvider from "./(home)/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
+import Refresher from "@/components/custom/refresher";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -30,9 +31,11 @@ export default function RootLayout({
             manrope.variable
           )}
         >
-          <Header />
-          <main>{children}</main>
-          <Toaster position="top-center"/>
+          <Refresher>
+            <Header />
+            <main>{children}</main>
+            <Toaster position="top-center" />
+          </Refresher>
         </body>
       </StoreProvider>
     </html>

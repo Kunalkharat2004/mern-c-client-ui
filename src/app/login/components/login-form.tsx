@@ -4,9 +4,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useFormState, useFormStatus } from "react-dom";
+import {  useFormStatus } from "react-dom";
 import login, { LoginState } from "@/lib/actions/login";
 import { Loader } from "lucide-react";
+import { useActionState } from "react";
 
 
 const initialState: LoginState = { type: "", message: "" };
@@ -29,7 +30,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [state, formAction] = useFormState(login, initialState);
+  const [state, formAction] = useActionState(login, initialState);
      if (state.type === "success") {
        window.location.href = "/";
      }
@@ -41,8 +42,6 @@ export function LoginForm({
           {
             state.type === "error" ? 
               <span className="text-red-500">{state.message}</span> :
-              state.type === "success" ?
-              <span className="text-green-500">{state.message}</span> :
               "Enter your email and password to login."
           }
         </p>

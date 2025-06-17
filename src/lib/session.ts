@@ -14,5 +14,5 @@ export const getSession = async () => {
     if(!reponse.ok) {
         return false;
     }
-    return reponse.json(); 
+    return await reponse.json(); 
 }
