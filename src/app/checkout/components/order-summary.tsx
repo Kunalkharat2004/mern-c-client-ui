@@ -13,7 +13,7 @@ const OrderSummary: React.FC = () => {
   const tax = Math.round(subtotal * 0.18); // 18% tax
   const total = subtotal + tax;
   return (
-    <div className="lg:col-span-1">
+    <div className="lg:w-1/3">
       <Card className="sticky top-8 shadow-lg border border-gray-200 rounded-lg">
         <CardHeader className="px-6 py-4 border-b border-gray-200">
           <CardTitle className="text-2xl font-semibold text-gray-800">
@@ -40,12 +40,6 @@ const OrderSummary: React.FC = () => {
           <div className="space-y-3 pt-4">
             <Button className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-md shadow-md hover:shadow-lg transition-all duration-200 ease-in-out">
               Proceed to Checkout
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full h-10 border-gray-300 text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200 ease-in-out"
-            >
-              Continue Shopping
             </Button>
           </div>
 

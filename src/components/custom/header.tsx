@@ -29,7 +29,6 @@ const Header = async () => {
   }
   
   const restaurants = await tenantFetchResponse.json();
-  console.log("Restaurants fetched:", restaurants);
 
   return (
     <header className="bg-white shadow-sm">

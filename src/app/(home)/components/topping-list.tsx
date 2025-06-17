@@ -25,7 +25,6 @@ const ToppingList = ({
       const toppingsData: Topping[] = data.data;
       setToppings(toppingsData);
 
-      console.log("Fetched toppings:", toppingsData);
     };
 
     fetchToppings();

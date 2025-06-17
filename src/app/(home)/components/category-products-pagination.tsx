@@ -79,9 +79,6 @@ export default function CategoryProductsPagination({
       // 1) If cache exists and is still fresh:
       if (cachedEntry && Date.now() - cachedEntry.timestamp < CACHE_TTL) {
         if (isMounted) {
-          console.log(
-            `[CACHE HIT] tenant=${tenantId} category=${categoryId} page=${page}`
-          );
           setProducts(cachedEntry.products);
 
           // Restore totalCount from totalCountStore if possible:
@@ -95,9 +92,6 @@ export default function CategoryProductsPagination({
       }
 
       // 2) Otherwise, fetch fresh data:
-      console.log(
-        `[FETCHING] tenant=${tenantId} category=${categoryId} page=${page}`
-      );
       setLoadingNewPage(true);
 
       try {

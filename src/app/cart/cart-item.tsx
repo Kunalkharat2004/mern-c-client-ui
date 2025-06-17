@@ -6,9 +6,7 @@ import MobileCartItem from './components/mobile-cart-item';
 import EmptyCartMessage from './components/empty-cart-message';
 import { useAppSelector } from '@/lib/store/hooks';
 import { CartItems } from '@/lib/store/feature/cart/cart-slice';
-import OrderSummary from './components/order-summary';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const CartItem = () => {

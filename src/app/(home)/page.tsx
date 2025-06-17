@@ -11,8 +11,6 @@ type Props = {
 export default async function Home({ searchParams }: Props) {
   const { restaurantId } = await searchParams;
 
-  console.log("Restaurant ID:", restaurantId);
-
   return (
     <>
       <section className="bg-white">
