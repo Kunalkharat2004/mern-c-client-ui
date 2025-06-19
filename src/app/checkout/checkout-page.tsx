@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -10,24 +10,26 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import AddressCard from "./components/AddressCard";
 import PaymentMode from "./components/PaymentMode";
 import { Textarea } from "@/components/ui/textarea";
 import OrderSummary from "./components/order-summary";
 import { RadioGroup } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { paymentMethodType } from "./page";
-import { redirect, useSearchParams } from "next/navigation";
 
 const paymentMode: paymentMethodType[] = [
-  {
-    key: "cash",
-    label: "Cash on Delivery",
-  },
-  {
-    key: "card",
-    label: "Card",
-  },
+  { key: "cash", label: "Cash on Delivery" },
+  { key: "card", label: "Card" },
 ];
 
 const dummyAddresses = [
@@ -42,9 +44,11 @@ const dummyAddresses = [
     address: "456 Work Avenue, Business District, BD 67890",
   },
 ];
-const CheckOutPage = () => {
+
+const CheckOutPage: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<string>("home");
   const [selectedPayment, setSelectedPayment] = useState<string>("cash");
+
   return (
     <>
       <div className="w-full lg:w-2/3">
@@ -54,7 +58,9 @@ const CheckOutPage = () => {
               Customer Details
             </CardTitle>
           </CardHeader>
+
           <CardContent className="space-y-6 pt-6">
+            {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label
@@ -89,6 +95,8 @@ const CheckOutPage = () => {
                 />
               </div>
             </div>
+
+            {/* Email */}
             <div>
               <Label
                 htmlFor="email"
@@ -105,13 +113,64 @@ const CheckOutPage = () => {
                 className="focus:border-primary focus:ring-primary"
               />
             </div>
+
+            {/* Delivery Address with Add Button */}
             <div className="space-y-4">
-              <Label
-                htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Delivery Address
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Delivery Address
+                </Label>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="link" className="hover:no-underline cursor-pointer" size="sm">
+                      + Add address
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Add a new address</DialogTitle>
+                      <DialogDescription>
+                        Enter a label and the full address below.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <form className="space-y-4">
+                      <div>
+                        <Label
+                          htmlFor="newAddressTitle"
+                          className="block text-sm mb-2 font-medium"
+                        >
+                          Label (e.g. “Home”, “Office”)
+                        </Label>
+                        <Input id="newAddressTitle" placeholder="My Home" />
+                      </div>
+                      <div>
+                        <Label
+                          htmlFor="newAddress"
+                          className="block text-sm mb-2 font-medium"
+                        >
+                          Address
+                        </Label>
+                        <Textarea
+                          id="newAddress"
+                          placeholder="Street, City, ZIP, Country…"
+                          rows={3}
+                        />
+                      </div>
+                    </form>
+
+                    <DialogFooter>
+                      <Button type="submit">Save Address</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
               <RadioGroup
                 value={selectedAddress}
                 onValueChange={setSelectedAddress}
@@ -128,6 +187,8 @@ const CheckOutPage = () => {
                 ))}
               </RadioGroup>
             </div>
+
+            {/* Payment */}
             <div className="space-y-4">
               <Label
                 htmlFor="paymentMethod"
@@ -151,6 +212,7 @@ const CheckOutPage = () => {
               </RadioGroup>
             </div>
           </CardContent>
+
           <CardFooter className="border-t">
             <div className="w-full space-y-3">
               <Label
@@ -160,15 +222,15 @@ const CheckOutPage = () => {
                 Additional Comments
               </Label>
               <Textarea
-                draggable="false"
-                placeholder="Any special instructions or notes for your order..."
                 id="message"
+                placeholder="Any special instructions or notes for your order..."
                 className="focus:border-primary focus:ring-primary"
               />
             </div>
           </CardFooter>
         </Card>
       </div>
+
       <OrderSummary />
     </>
   );
