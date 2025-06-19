@@ -3,10 +3,9 @@ import Image from "next/image";
 import { Suspense } from "react";
 import ProductList from "./components/product-list";
 import ProductListSkeleton from "./components/skeleton/product-list-skeleton";
+import { SearchParamsProps } from "@/lib/types";
 
-export type SearchParamsProps = {
-  searchParams: Promise<{ restaurantId?: string }>;
-};
+
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { restaurantId } = await searchParams;

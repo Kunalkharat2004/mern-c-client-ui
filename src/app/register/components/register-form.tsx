@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { PasswordInput } from "@/components/ui/password-input"; // Import your new component
 import { useFormStatus } from "react-dom";
 import { Loader } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const initialState: RegisterState = { type: "", message: "" };
 
@@ -33,8 +35,18 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"form">) {
   const [state, formAction] = useActionState(register, initialState);
+  const searchParams = useSearchParams();
+  
+   const returnTo = searchParams.get("return-to") || "/";
+  const restaurantId = searchParams.get("restaurantId") || "/";
+
+  const finalURL = new URLSearchParams({ restaurantId: restaurantId });
+
+  const existingQueryString = finalURL.toString();
+  
+  finalURL.append("return-to", `/checkout?${existingQueryString}`);
    if (state.type === "success") {
-     window.location.href = "/";
+     window.location.href = returnTo;
    }
   return (
     <form
@@ -129,9 +141,12 @@ export function RegisterForm({
       </div>
       <div className="text-center text-sm">
         Already have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <Link
+          href={`/login?${finalURL}`}
+          className="underline underline-offset-4"
+        >
           Sign In
-        </a>
+        </Link>
       </div>
     </form>
   );

@@ -80,3 +80,7 @@ export type SetCookiesParams = {
   parsedAccessToken: ParsedCookie;
   parsedRefreshToken: ParsedCookie;
 };
+
+export type SearchParamsProps = {
+  searchParams: Promise<{ restaurantId?: string }>;
+};

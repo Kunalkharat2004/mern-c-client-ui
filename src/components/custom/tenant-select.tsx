@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation"; // Import usePathname
+import { useRouter, useSearchParams } from "next/navigation"; // Import usePathname
 import { Tenant } from "@/lib/types";
 import {
   Select,

@@ -9,6 +9,8 @@ import login, { LoginState } from "@/lib/actions/login";
 import { Loader } from "lucide-react";
 import { useActionState } from "react";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const initialState: LoginState = { type: "", message: "" };
 
@@ -34,10 +36,19 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [state, formAction] = useActionState(login, initialState);
 
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("return-to") || "/";
+   const restaurantId = searchParams.get("restaurantId") || "/";
+
+  const finalURL = new URLSearchParams({ restaurantId: restaurantId });
+
+  const existingQueryString = finalURL.toString();
+  
+  finalURL.append("return-to", `/checkout?${existingQueryString}`);
   // Consider using a more robust client-side redirection or a React Router
   // for navigation. window.location.href can cause full page reloads.
   if (state.type === "success") {
-    window.location.href = "/";
+    window.location.href = returnTo; // Redirect to the returnTo URL on successful login
   }
 
   return (
@@ -84,9 +95,12 @@ export function LoginForm({
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <Link
+          href={`/register?${finalURL}`}
+          className="underline underline-offset-4"
+        >
           Sign up
-        </a>
+        </Link>
       </div>
     </form>
   );
