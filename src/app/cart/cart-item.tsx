@@ -7,12 +7,13 @@ import EmptyCartMessage from './components/empty-cart-message';
 import { useAppSelector } from '@/lib/store/hooks';
 import { CartItems } from '@/lib/store/feature/cart/cart-slice';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const CartItem = () => {
   const router = useRouter();
 
   const products: CartItems[] = useAppSelector((state) => state.cart.cartItems);
+  const searchParams = useSearchParams();
   return (
     <div className="container mx-auto max-w-7xl px-4 py-10">
       {products.length > 0 ? (
@@ -50,7 +51,11 @@ const CartItem = () => {
             <Button
               variant={"default"}
               onClick={() => {
-                router.push("/checkout");
+                router.push(
+                  `/checkout?restaurantId=${
+                    searchParams.get("restaurantId") || ""
+                  }`
+                );
               }} // Assign the click handler
               className="mt-4 md:mt-0 cursor-pointer" // Add some top margin for smaller screens, remove for md+
             >

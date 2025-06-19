@@ -13,7 +13,6 @@ import {
 const TenantSelect = ({ restaurants }: { restaurants: { data: Tenant[] } }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname(); // Get the current path
 
   const handleValueChange = (value: string) => {
     router.push(`/?restaurantId=${value}`);
@@ -21,9 +20,9 @@ const TenantSelect = ({ restaurants }: { restaurants: { data: Tenant[] } }) => {
 
   // Determine the currently selected value for the Select component
   // If on /cart page, set to empty string to display placeholder
-  const selectedValue =
-    pathname === "/cart" ? "" : searchParams.get("restaurantId") || "";
+  const selectedValue = searchParams.get("restaurantId") || "";
 
+  console.log("Selected Value:", selectedValue);
   return (
     <Select
       onValueChange={handleValueChange}

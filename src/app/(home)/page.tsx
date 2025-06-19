@@ -4,11 +4,11 @@ import { Suspense } from "react";
 import ProductList from "./components/product-list";
 import ProductListSkeleton from "./components/skeleton/product-list-skeleton";
 
-type Props = {
+export type SearchParamsProps = {
   searchParams: Promise<{ restaurantId?: string }>;
 };
 
-export default async function Home({ searchParams }: Props) {
+export default async function Home({ searchParams }: SearchParamsProps) {
   const { restaurantId } = await searchParams;
 
   return (
@@ -41,26 +41,24 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </section>
 
-      {
-        !restaurantId ? (  <div className="container mx-auto max-w-7xl px-4 py-12 text-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="text-6xl">🏪</div>
-          <h2 className="text-2xl font-semibold text-gray-800">Welcome!</h2>
-          <p className="text-xl text-gray-700">
-            Please select a restaurant to view the menu.
-          </p>
-          <p className="text-sm text-gray-500">
-            Use the restaurant selector in the header above.
-          </p>
+      {!restaurantId ? (
+        <div className="container mx-auto max-w-7xl px-4 py-12 text-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="text-6xl">🏪</div>
+            <h2 className="text-2xl font-semibold text-gray-800">Welcome!</h2>
+            <p className="text-xl text-gray-700">
+              Please select a restaurant to view the menu.
+            </p>
+            <p className="text-sm text-gray-500">
+              Use the restaurant selector in the header above.
+            </p>
+          </div>
         </div>
-        </div>) : (
-            <Suspense fallback={<ProductListSkeleton />}>
-        <ProductList restaurantId={restaurantId} />
-      </Suspense>
-      )
-      }
-
-      
+      ) : (
+        <Suspense fallback={<ProductListSkeleton />}>
+          <ProductList restaurantId={restaurantId} />
+        </Suspense>
+      )}
     </>
   );
 }
