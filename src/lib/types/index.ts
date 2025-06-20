@@ -84,3 +84,21 @@ export type SetCookiesParams = {
 export type SearchParamsProps = {
   searchParams: Promise<{ restaurantId?: string }>;
 };
+
+export interface Address {
+  _id: string;
+  label: "Home" | "Work" | "Other"; // e.g. “Home” or “Work”
+  text: string; // full address line
+  city: string; // city name
+  postalCode: string; // ZIP / PIN
+  phone: string; // phone number
+  isDefault: boolean; // mark your primary address
+}
+
+export interface Customer {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  addresses: Address[];
+}
