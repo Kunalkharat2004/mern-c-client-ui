@@ -95,7 +95,13 @@ export interface Address {
   isDefault: boolean; // mark your primary address
 }
 
+export interface AddAddressApi{
+  // diselect _id from address
+  address: Omit<Address, "_id">; 
+}
+
 export interface Customer {
+  _id: string;
   userId: string;
   firstName: string;
   lastName: string;

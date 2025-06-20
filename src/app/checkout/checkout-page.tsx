@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -15,28 +15,11 @@ import PaymentMode from "./components/PaymentMode";
 import { Textarea } from "@/components/ui/textarea";
 import OrderSummary from "./components/order-summary";
 import { RadioGroup } from "@/components/ui/radio-group";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { paymentMethodType } from "./page";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomer } from "@/lib/http/api";
-import { Customer, Address } from "@/lib/types";
-import { Plus} from "lucide-react";
+import { Customer } from "@/lib/types";
+import AddAddressDialog from "./components/add-address-dialog";
 
 const paymentMode: paymentMethodType[] = [
   { key: "cash", label: "Cash on Delivery" },
@@ -46,18 +29,10 @@ const paymentMode: paymentMethodType[] = [
 const CheckOutPage: React.FC = () => {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("cash");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newAddress, setNewAddress] = useState<Address>({
-    _id: "",
-    label: "Home",
-    text: "",
-    city: "",
-    postalCode: "",
-    phone: "",
-    isDefault: false,
-  });
+ 
+ 
 
-  const { data: customer, isLoading } = useQuery<Customer>({
+  const { data: customer, isLoading, isError } = useQuery<Customer>({
     queryKey: ["customer"],
     queryFn: async () => {
       return await getCustomer().then((res) => res.data);
@@ -66,32 +41,18 @@ const CheckOutPage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  const handleAddressSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle address submission logic here
-    console.log("New address:", newAddress);
-    setIsDialogOpen(false);
-    // Reset form
-    setNewAddress({
-      _id: "",
-      label: "Home",
-      text: "",
-      city: "",
-      postalCode: "",
-      phone: "",
-      isDefault: false,
-    });
-  };
-
-  const handleInputChange = (field: keyof Address, value: string | boolean) => {
-    setNewAddress((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  useEffect(() => {
+    if (customer?.addresses.length) {
+      // Set the first address as selected by default
+      const defaultAddress = customer.addresses.find(a => a.isDefault)?._id;
+      setSelectedAddress(defaultAddress || customer.addresses[0]._id);
+    }
+  },[customer]);
 
   if (isLoading) return <div>Loading...</div>;
-
+  if(isError) return <div>Error loading customer data</div>;
+  if (!customer) return <div>No customer data found</div>;
+  console.log("selectedAddress:", selectedAddress);
   return (
     <>
       <div className="w-full lg:w-2/3">
@@ -170,154 +131,7 @@ const CheckOutPage: React.FC = () => {
                   Delivery Address
                 </Label>
 
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="link"
-                      className="text-primary cursor-pointer"
-                      size="sm"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Address
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader className="pb-4 border-b">
-                      <DialogTitle className="text-xl font-semibold text-gray-800">
-                        Add New Address
-                      </DialogTitle>
-                      <DialogDescription className="text-gray-600">
-                        Fill in the details below to add a new delivery address.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <form
-                      onSubmit={handleAddressSubmit}
-                      className="space-y-6 py-4"
-                    >
-                      {/* Address Label */}
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">
-                          Address Label *
-                        </Label>
-                        <Select
-                          value={newAddress.label || "Home"}
-                          onValueChange={(value) =>
-                            handleInputChange("label", value)
-                          }
-                        >
-                          <SelectTrigger className="h-11 border-2 focus:border-primary">
-                            <SelectValue placeholder="Select address type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Home">🏠 Home</SelectItem>
-                            <SelectItem value="Work">🏢 Work</SelectItem>
-                            <SelectItem value="Other">📍 Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Street Address */}
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">
-                          Street Address *
-                        </Label>
-                        <Textarea
-                          value={newAddress.text || ""}
-                          onChange={(e) =>
-                            handleInputChange("text", e.target.value)
-                          }
-                          placeholder="Enter your full street address (building, street, area)"
-                          rows={3}
-                          className="border-2 focus:border-primary focus:ring-primary resize-none"
-                        />
-                      </div>
-
-                      {/* City and Postal Code */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-semibold text-gray-700">
-                            City *
-                          </Label>
-                          <Input
-                            value={newAddress.city || ""}
-                            onChange={(e) =>
-                              handleInputChange("city", e.target.value)
-                            }
-                            placeholder="Enter city name"
-                            className="h-11 border-2 focus:border-primary focus:ring-primary"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-semibold text-gray-700">
-                            Postal Code *
-                          </Label>
-                          <Input
-                            value={newAddress.postalCode || ""}
-                            onChange={(e) =>
-                              handleInputChange("postalCode", e.target.value)
-                            }
-                            placeholder="Enter postal code"
-                            className="h-11 border-2 focus:border-primary focus:ring-primary"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Phone Number */}
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">
-                          Phone Number *
-                        </Label>
-                        <Input
-                          value={newAddress.phone || ""}
-                          onChange={(e) =>
-                            handleInputChange("phone", e.target.value)
-                          }
-                          placeholder="Enter phone number"
-                          type="tel"
-                          className="h-11 border-2 focus:border-primary focus:ring-primary"
-                        />
-                      </div>
-
-                      {/* Set as Default */}
-                      <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                        <input
-                          type="checkbox"
-                          id="isDefault"
-                          checked={newAddress.isDefault || false}
-                          onChange={(e) =>
-                            handleInputChange("isDefault", e.target.checked)
-                          }
-                          className="w-4 h-4 text-primary rounded focus:ring-primary"
-                        />
-                        <Label
-                          htmlFor="isDefault"
-                          className="text-sm text-gray-700"
-                        >
-                          Set as default delivery address
-                        </Label>
-                      </div>
-
-                      <DialogFooter className="pt-4 border-t">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsDialogOpen(false)}
-                          className="mr-2"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          className="bg-primary hover:bg-primary cursor-pointer px-6"
-                        >
-                          Save Address
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                <AddAddressDialog id={ customer._id} />
               </div>
 
               {customer?.addresses && customer.addresses.length > 0 ? (
@@ -326,12 +140,14 @@ const CheckOutPage: React.FC = () => {
                   onValueChange={setSelectedAddress}
                   className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
-                  {customer.addresses.map((address, index) => (
+                  {customer.addresses
+                    .sort((a, b) => (a.isDefault === b.isDefault ? 0 : a.isDefault ? -1 : 1))
+                    .map((address) => (
                     <AddressCard
                       key={address._id!}
                       address={address}
-                      selected={selectedAddress === index.toString()}
-                      value={index.toString()}
+                      selected={selectedAddress === address._id!}
+                      value={address._id!}
                     />
                   ))}
                 </RadioGroup>

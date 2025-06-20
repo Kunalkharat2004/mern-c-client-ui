@@ -52,7 +52,6 @@ const AddressCard = ({ address, selected, value }: AddressCardProps) => {
         <RadioGroupItem
           value={value}
           id={value}
-          checked={selected}
           className="mt-2 text-primary border-2 border-gray-300 focus:border-primary-500"
         />
         <Label htmlFor={value} className="flex-1 cursor-pointer">
