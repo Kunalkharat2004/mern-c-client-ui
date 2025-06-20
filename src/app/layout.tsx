@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Refresher from "@/components/custom/refresher";
 import QueryProvider from "./QueryClient";
 
+
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],

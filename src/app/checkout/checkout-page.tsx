@@ -20,6 +20,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getCustomer } from "@/lib/http/api";
 import { Customer } from "@/lib/types";
 import AddAddressDialog from "./components/add-address-dialog";
+import CheckoutPageSkeleton from "./components/skeleton/checkout-page-skeleton";
+import CheckoutPageError from "../../components/custom/page-error";
 
 const paymentMode: paymentMethodType[] = [
   { key: "cash", label: "Cash on Delivery" },
@@ -49,10 +51,13 @@ const CheckOutPage: React.FC = () => {
     }
   },[customer]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if(isError) return <div>Error loading customer data</div>;
+  if (isLoading) return <CheckoutPageSkeleton/>;
+  if(isError) return (
+    <div className="w-full flex justify-center">
+      <CheckoutPageError errorType="server" />
+    </div>
+  );
   if (!customer) return <div>No customer data found</div>;
-  console.log("selectedAddress:", selectedAddress);
   return (
     <>
       <div className="w-full lg:w-2/3">
