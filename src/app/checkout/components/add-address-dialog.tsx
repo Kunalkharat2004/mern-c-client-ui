@@ -105,9 +105,14 @@ const AddAddressDialog = ({ id }: { id: string }) => {
     },
   });
 
-  const handleAddressSubmit = (values: AddAddressFormValues) => {
-    console.log("Form values:", values);
-    addNewAddress(values);
+  const handleAddressSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+    e.stopPropagation();
+
+    return form.handleSubmit((values: AddAddressFormValues) => {
+      console.log("Form values:", values);
+      addNewAddress(values);
+    })(e);
   };
 
   return (
@@ -134,10 +139,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleAddressSubmit)}
-            className="space-y-6 py-4"
-          >
+          <form onSubmit={handleAddressSubmit} className="space-y-6 py-4">
             {/* Address Label */}
             <FormField
               control={form.control}
