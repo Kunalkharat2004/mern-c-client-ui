@@ -108,3 +108,14 @@ export interface Customer {
   email: string;
   addresses: Address[];
 }
+
+export interface Coupon {
+  code: string;
+  tenantId: string;
+}
+
+export type CouponResponse = {
+  valid: boolean;
+  exp: boolean;
+  discount: number;
+}
