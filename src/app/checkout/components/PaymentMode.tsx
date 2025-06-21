@@ -17,11 +17,15 @@ const PaymentMode = ({ label, value, selected }: PaymentModeProps) => {
   return (
     <div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value={value} id={value} className="text-primary" />
-        <Label htmlFor={value} className="w-full">
+        <RadioGroupItem
+          value={value}
+          id={value}
+          className="hidden mt-2 text-primary border-2 border-gray-300 focus:border-primary-500"
+        />
+        <Label htmlFor={value} className="flex-1 cursor-pointer">
           <Card
             className={cn(
-              "w-full cursor-pointer transition-all duration-200",
+              "w-full cursor-pointer",
               "bg-white hover:bg-primary/5 hover:border-primary/50",
               "border-2",
               selected ? "border-primary" : "border-gray-100",
@@ -31,11 +35,28 @@ const PaymentMode = ({ label, value, selected }: PaymentModeProps) => {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 {label === "Cash on Delivery" ? (
-                  <Coins className="h-5 w-5" />
+                  <Coins
+                    className={cn(
+                      "h-5 w-5",
+                      selected ? "text-primary" : "text-gray-600"
+                    )}
+                  />
                 ) : (
-                  <CreditCard className="h-5 w-5" />
+                  <CreditCard
+                    className={cn(
+                      "h-5 w-5",
+                      selected ? "text-primary" : "text-gray-600"
+                    )}
+                  />
                 )}
-                <p className="text-sm font-medium text-gray-700">{label}</p>
+                <p
+                  className={cn(
+                    "text-sm font-medium",
+                    selected ? "text-primary" : "text-gray-700"
+                  )}
+                >
+                  {label}
+                </p>
               </div>
             </CardContent>
           </Card>

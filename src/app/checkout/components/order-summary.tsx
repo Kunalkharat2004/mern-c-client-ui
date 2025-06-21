@@ -6,8 +6,11 @@ import { useAppSelector } from '@/lib/store/hooks';
 import { getFinalTotal } from '@/lib/utils';
 import React from 'react'
 
+interface OrderSummaryProps {
+  isLoading?: boolean;
+}
 
-const OrderSummary: React.FC = () => {
+const OrderSummary: React.FC = ({isLoading = false}) => {
   const products = useAppSelector((state) => state.cart.cartItems);
   const subtotal = getFinalTotal(products);
   const tax = Math.round(subtotal * 0.18); // 18% tax
@@ -38,8 +41,11 @@ const OrderSummary: React.FC = () => {
           </div>
 
           <div className="space-y-3 pt-4">
-            <Button className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-md shadow-md hover:shadow-lg transition-all duration-200 ease-in-out">
-              Proceed to Checkout
+            <Button
+              disabled={isLoading}
+              className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-md shadow-md hover:shadow-lg transition-all duration-200 ease-in-out"
+            >
+              {isLoading ? "Processing..." : " Place Order"}
             </Button>
           </div>
 

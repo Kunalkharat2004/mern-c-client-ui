@@ -114,8 +114,8 @@ const AddAddressDialog = ({ id }: { id: string }) => {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
-          className="bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800 transition-colors duration-200"
+          variant="link"
+          className="text-primary cursor-pointer"
           size="sm"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -152,7 +152,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-11 border-2 focus:border-blue-500">
+                      <SelectTrigger className="h-11 border-2 focus:border-primary">
                         <SelectValue placeholder="Select address type" />
                       </SelectTrigger>
                     </FormControl>
@@ -181,7 +181,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                       {...field}
                       placeholder="Enter your full street address (building, street, area)"
                       rows={3}
-                      className="border-2 focus:border-blue-500 focus:ring-blue-500/20 resize-none"
+                      className="border-2 focus:border-primary focus:ring-primary resize-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -203,7 +203,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                       <Input
                         {...field}
                         placeholder="Enter city name"
-                        className="h-11 border-2 focus:border-blue-500 focus:ring-blue-500/20"
+                        className="h-11 border-2 focus:border-primary focus:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -223,7 +223,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                       <Input
                         {...field}
                         placeholder="Enter postal code"
-                        className="h-11 border-2 focus:border-blue-500 focus:ring-blue-500/20"
+                        className="h-11 border-2 focus:border-primary focus:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -246,7 +246,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                       {...field}
                       placeholder="Enter phone number"
                       type="tel"
-                      className="h-11 border-2 focus:border-blue-500 focus:ring-blue-500/20"
+                      className="h-11 border-2 focus:border-primary focus:ring-primary"
                     />
                   </FormControl>
                   <FormMessage />
@@ -266,7 +266,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
                       id="isDefault"
                       checked={field.value}
                       onChange={(e) => field.onChange(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-primary rounded focus:ring-primary"
                     />
                   </FormControl>
                   <Label htmlFor="isDefault" className="text-sm text-gray-700">
@@ -288,7 +288,7 @@ const AddAddressDialog = ({ id }: { id: string }) => {
               </Button>
               <Button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                className="bg-primary hover:bg-primary text-white px-6"
                 disabled={isPending}
               >
                 {isPending ? "Saving..." : "Save Address"}
