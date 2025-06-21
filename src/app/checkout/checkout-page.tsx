@@ -102,11 +102,14 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
   return (
     <div className="container mx-auto px-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handlePlaceOrder)} className="flex flex-col lg:flex-row gap-8">
+        <form
+          onSubmit={form.handleSubmit(handlePlaceOrder)}
+          className="flex flex-col lg:flex-row gap-8"
+        >
           {/* {Left Column - Customer Details} */}
           <div className="w-full lg:w-2/3">
             <Card className="border-2 shadow-lg">
-              <CardHeader className="border-b">
+              <CardHeader className="border-b border-gray-200">
                 <CardTitle className="text-2xl font-semibold text-gray-800">
                   Customer Details
                 </CardTitle>
@@ -191,20 +194,26 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
                           <FormControl>
                             {customer?.addresses &&
                             customer.addresses.length > 0 ? (
-                                <RadioGroup
-                                  value={field.value}
+                              <RadioGroup
+                                value={field.value}
                                 onValueChange={field.onChange}
                                 className="grid grid-cols-1 md:grid-cols-2 gap-4"
                               >
                                 {customer.addresses
-                                  .sort((a, b) => a.isDefault === b.isDefault ? 0: a.isDefault? -1: 1)
+                                  .sort((a, b) =>
+                                    a.isDefault === b.isDefault
+                                      ? 0
+                                      : a.isDefault
+                                      ? -1
+                                      : 1
+                                  )
                                   .map((address) => (
-                                      <AddressCard
-                                        key={address._id!}
-                                        address={address}
-                                        selected={field.value === address._id!}
-                                        value={address._id}
-                                      />
+                                    <AddressCard
+                                      key={address._id!}
+                                      address={address}
+                                      selected={field.value === address._id!}
+                                      value={address._id}
+                                    />
                                   ))}
                               </RadioGroup>
                             ) : (
@@ -216,7 +225,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
                               </div>
                             )}
                           </FormControl>
-                          <FormMessage/>
+                          <FormMessage />
                         </FormItem>
                       );
                     }}
@@ -225,10 +234,10 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
 
                 {/* Payment */}
                 <div className="space-y-6">
-                <Label className="text-lg font-semibold text-gray-800">
-                  Payment Method
+                  <Label className="text-lg font-semibold text-gray-800">
+                    Payment Method
                   </Label>
-                  
+
                   <FormField
                     name="paymentMethod"
                     control={form.control}
@@ -251,12 +260,12 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
                               ))}
                             </RadioGroup>
                           </FormControl>
-                          <FormMessage/>
+                          <FormMessage />
                         </FormItem>
                       );
                     }}
                   />
-              </div>
+                </div>
               </CardContent>
 
               <CardFooter className="border-t bg-gray-50">
@@ -282,7 +291,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
                               rows={3}
                             />
                           </FormControl>
-                          <FormMessage/>
+                          <FormMessage />
                         </FormItem>
                       );
                     }}
