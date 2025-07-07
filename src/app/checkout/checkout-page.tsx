@@ -26,6 +26,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useSearchParams } from "next/navigation";
+import { useAppSelector } from "@/lib/store/hooks";
+import { toast } from "sonner";
 
 const paymentMode: paymentMethodType[] = [
   { key: "cash", label: "Cash on Delivery" },
@@ -41,11 +44,16 @@ const paymentMode: paymentMethodType[] = [
  });
 
 type FormData = z.infer<typeof formSchema>;
-type CheckoutPageProps = {
-  onFormSubmit: (data: FormData) => void;
-} 
+// type CheckoutPageProps = {
+//   onFormSubmit: (data: FormData) => void;
+// } 
 
-const CheckOutPage: React.FC<CheckoutPageProps> = () => {
+const CheckOutPage  = () => {
+
+  const searchParams = useSearchParams();
+  const cart = useAppSelector((state) => state.cart);
+
+  const couponCodeRef = React.useRef("");
   const {
     data: customer,
     isLoading,
@@ -76,19 +84,36 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
     }
   },[customer, form]);
 
+  // Handle place order
    const handlePlaceOrder = (values: FormData) => {
-     console.log("Order placed with values:", values);
-     console.log("Customer details:", {
-       firstName: customer?.firstName,
-       lastName: customer?.lastName,
-       email: customer?.email,
-     });
-
      // Find selected address details
      const selectedAddress = customer?.addresses?.find(
        (addr) => addr._id === values.addressId
      );
-     console.log("Selected address:", selectedAddress);
+     const tenantId = searchParams.get("restaurantId");
+     if(!tenantId){
+      toast.error("Restaurant ID is missing in the URL");
+      return;
+     }
+
+     const orderData = {
+      cart: cart.cartItems,
+      couponCode: couponCodeRef.current?.trim() || "",
+      tenantId: tenantId,
+      comment: values.message || "",
+      address: {
+        label: selectedAddress?.label || "",
+        text: selectedAddress?.text || "",
+        city: selectedAddress?.city || "",
+        postalCode: selectedAddress?.postalCode || "",
+        phone: selectedAddress?.phone || "",
+        isDefault: selectedAddress?.isDefault || false,
+      },
+      customerId: customer?._id,
+      paymentMode: values.paymentMethod || "cash",
+     }
+
+     console.log("Order data to be sent:", orderData);
    };
 
   if (isLoading) return <CheckoutPageSkeleton />;
@@ -302,7 +327,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = () => {
           </div>
 
           {/* {Right Column - Order Summary} */}
-          <OrderSummary />
+          <OrderSummary handleCouponCodeChange={(code:string)=> couponCodeRef.current = code}/>
         </form>
       </Form>
     </div>

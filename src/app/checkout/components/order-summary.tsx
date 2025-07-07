@@ -16,9 +16,10 @@ import { CheckCircle, XCircle, Tag, Loader2, Sparkles } from "lucide-react";
 
 interface OrderSummaryProps {
   isLoading?: boolean;
+  handleCouponCodeChange: (code: string) => void;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false }) => {
+const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false, handleCouponCodeChange }) => {
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountError, setDiscountError] = useState("");
   const [discountSuccess, setDiscountSuccess] = useState("");
@@ -114,6 +115,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false }) => {
         setAppliedCouponCode(couponCodeRef.current?.value.trim() || "");
         setShowConfetti(true);
 
+        handleCouponCodeChange(couponCodeRef.current?.value.trim() || "");
         // Clear the input field
         if (couponCodeRef.current) {
           couponCodeRef.current.value = "";
@@ -155,6 +157,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false }) => {
     setDiscountError("");
     setAppliedCouponCode("");
     setCouponStatus("idle");
+    handleCouponCodeChange(""); // Clear the coupon code in parent component
+    if (couponCodeRef.current) {
+      couponCodeRef.current.value = "";
+    }
   };
 
   return (
