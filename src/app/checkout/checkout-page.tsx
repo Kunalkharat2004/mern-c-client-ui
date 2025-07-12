@@ -86,7 +86,7 @@ const CheckOutPage  = () => {
     }
   },[customer, form]);
 
-  const {mutate} = useMutation({
+  const {mutate,isPending:isOrderPending} = useMutation({
     mutationKey: ["createOrder"],
     mutationFn: async(orderData: OrderData) => {
       const idempotencyKey = idempotencyKeyRef.current ?
@@ -340,7 +340,9 @@ const CheckOutPage  = () => {
           </div>
 
           {/* {Right Column - Order Summary} */}
-          <OrderSummary handleCouponCodeChange={(code:string)=> couponCodeRef.current = code}/>
+          <OrderSummary 
+          isOrderPending={isOrderPending}
+          handleCouponCodeChange={(code:string)=> couponCodeRef.current = code}/>
         </form>
       </Form>
     </div>

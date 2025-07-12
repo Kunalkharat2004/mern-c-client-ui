@@ -15,11 +15,11 @@ import Confetti from "react-confetti";
 import { CheckCircle, XCircle, Tag, Loader2, Sparkles } from "lucide-react";
 
 interface OrderSummaryProps {
-  isLoading?: boolean;
+  isOrderPending?: boolean;
   handleCouponCodeChange: (code: string) => void;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false, handleCouponCodeChange }) => {
+const OrderSummary: React.FC<OrderSummaryProps> = ({ isOrderPending = false, handleCouponCodeChange }) => {
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountError, setDiscountError] = useState("");
   const [discountSuccess, setDiscountSuccess] = useState("");
@@ -322,10 +322,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ isLoading = false, handleCo
             {/* Place Order Button */}
             <div className="pt-4">
               <Button
-                disabled={isLoading}
+                disabled={isOrderPending}
                 className="w-full h-12 cursor-pointer text-lg font-bold bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white rounded-xl shadow-lg hover:shadow-xl"
               >
-                {isLoading ? (
+                {isOrderPending ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Processing...
