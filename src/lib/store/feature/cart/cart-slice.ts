@@ -85,7 +85,11 @@ export const cartSlice = createSlice({
           window.localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
         }
       }
-    } 
+    }, 
+    cartCleaner: () =>{
+      window.localStorage.setItem("cartItems", JSON.stringify([]));
+      return initialState; // Reset the state to initial state
+    }
   },
 });
 
@@ -97,6 +101,7 @@ export const {
   decrementCartItemQty,
   deleteCartItem,
   removeTopping,
+  cartCleaner,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
