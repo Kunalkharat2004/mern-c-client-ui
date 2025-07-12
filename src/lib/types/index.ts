@@ -92,6 +92,13 @@ export type SearchParamsProps = {
   }>;
 };
 
+export interface SearchParamsPropsHeader {
+  searchParams: {
+    restaurantId?: string
+  }
+}
+
+
 export interface Address {
   _id?: string;
   label: "Home" | "Work" | "Other"; // e.g. “Home” or “Work”

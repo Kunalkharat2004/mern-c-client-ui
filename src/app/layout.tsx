@@ -7,7 +7,8 @@ import StoreProvider from "./(home)/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Refresher from "@/components/custom/refresher";
 import QueryProvider from "./QueryClient";
-
+import SearchParamsProvider from "@/components/custom/search-params-provider";
+import { Suspense } from "react";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -35,8 +36,12 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Refresher>
-              <Header />
-              <main>{children}</main>
+              <Suspense fallback={<div>Loading...</div>}>
+                <SearchParamsProvider>
+                  <Header />
+                  <main>{children}</main>
+                </SearchParamsProvider>
+              </Suspense>
               <Toaster position="top-center" />
             </Refresher>
           </QueryProvider>

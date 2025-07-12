@@ -9,11 +9,11 @@ import {
 
 import { Phone, MenuIcon, UtensilsCrossed, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import TenantSelect from "./tenant-select";
 import CartCounterClient from "./cart-counter-client";
 import { getSession } from "@/lib/session";
 import Logout from "./logout";
+import LogoWithParams from "./header-client-wrapper";
 
 const Header = async () => {
   const session = await getSession();
@@ -33,17 +33,7 @@ const Header = async () => {
     <header className="bg-white shadow-sm">
       <nav className="container mx-auto flex items-center justify-between max-w-7xl p-4">
         <div className="flex items-center gap-4">
-          <Link href={`/`}>
-            <Image
-              src="/homePageIcons/logo.svg"
-              alt="Logo"
-              width={90}
-              height={90}
-              className="cursor-pointer"
-            />
-          </Link>
-
-          {/* Render the Client Component for Tenant Selection */}
+          <LogoWithParams/>
           <TenantSelect restaurants={restaurants} />
         </div>
 

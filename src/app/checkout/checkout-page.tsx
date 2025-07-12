@@ -28,8 +28,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useSearchParams } from "next/navigation";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toast } from "sonner";
+import { cartCleaner } from "@/lib/store/feature/cart/cart-slice";
 
 const paymentMode: paymentMethodType[] = [
   { key: "cod", label: "Cash on Delivery" },
@@ -52,9 +53,11 @@ type FormData = z.infer<typeof formSchema>;
 const CheckOutPage  = () => {
 
   const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart);
   const idempotencyKeyRef = React.useRef("");
-
+  
+  const tenantId = searchParams.get("restaurantId");
   const couponCodeRef = React.useRef("");
   const {
     data: customer,
@@ -100,7 +103,8 @@ const CheckOutPage  = () => {
       }else {
       // Else the payment is done via COD
       toast.success("Order placed successfully! You will receive a confirmation soon.");
-      window.location.href = "/"; 
+      window.location.href = `/?restaurantId=${tenantId}`; 
+      dispatch(cartCleaner());
       }
 
       
@@ -114,7 +118,7 @@ const CheckOutPage  = () => {
      const selectedAddress = customer?.addresses?.find(
        (addr) => addr._id === values.addressId
      );
-     const tenantId = searchParams.get("restaurantId");
+  
      if(!tenantId){
       toast.error("Restaurant ID is missing in the URL");
       return;
