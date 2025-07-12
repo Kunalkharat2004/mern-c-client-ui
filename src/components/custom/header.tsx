@@ -14,6 +14,7 @@ import CartCounterClient from "./cart-counter-client";
 import { getSession } from "@/lib/session";
 import Logout from "./logout";
 import LogoWithParams from "./header-client-wrapper";
+import NavigationLinks from "./navigation-links";
 
 const Header = async () => {
   const session = await getSession();
@@ -40,18 +41,8 @@ const Header = async () => {
         {/* Desktop Navigation and Actions (hidden on small screens) */}
         <div className="hidden md:flex items-center justify-between gap-12 w-full max-w-md">
           <div className="flex items-center gap-4">
-            <Link
-              href="/menu"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              Menu
-            </Link>
-            <Link
-              href="/orders"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              Orders
-            </Link>
+
+            <NavigationLinks />
             <CartCounterClient />
           </div>
 
