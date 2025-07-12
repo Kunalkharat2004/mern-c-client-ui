@@ -1,3 +1,5 @@
+import { CartItems } from "../store/feature/cart/cart-slice";
+
 export interface Tenant {
     id: string;
     name: string;
@@ -86,7 +88,7 @@ export type SearchParamsProps = {
 };
 
 export interface Address {
-  _id: string;
+  _id?: string;
   label: "Home" | "Work" | "Other"; // e.g. “Home” or “Work”
   text: string; // full address line
   city: string; // city name
@@ -118,4 +120,28 @@ export type CouponResponse = {
   valid: boolean;
   exp: boolean;
   discount: number;
+}
+
+export enum OrderStatus {
+  RECEIVED = "received",
+  CONFIRMED = "confirmed",
+  PREPARING = "preparing",
+  OUT_FOR_DELIVERY = "out_for_delivery",
+  DELIVERED = "delivered",
+}
+
+export enum PaymentStatus {
+  PENDING = "pending",
+  PAID = "paid",
+  FAILED = "failed",
+}
+
+export interface OrderData {
+  cart: CartItems[];
+  customerId: string;
+  couponCode: string;
+  address: Address;
+  tenantId: string;
+  comment?: string;
+  paymentMode: "card" | "cod";
 }

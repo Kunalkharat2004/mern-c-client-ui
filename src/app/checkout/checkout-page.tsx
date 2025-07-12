@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import {
   Card,
   CardHeader,
@@ -16,9 +17,9 @@ import { Textarea } from "@/components/ui/textarea";
 import OrderSummary from "./components/order-summary";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { paymentMethodType } from "./page";
-import { useQuery } from "@tanstack/react-query";
-import { getCustomer } from "@/lib/http/api";
-import { Customer } from "@/lib/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createOrder, getCustomer } from "@/lib/http/api";
+import { Customer, OrderData } from "@/lib/types";
 import AddAddressDialog from "./components/add-address-dialog";
 import CheckoutPageSkeleton from "./components/skeleton/checkout-page-skeleton";
 import CheckoutPageError from "../../components/custom/page-error";
@@ -31,13 +32,13 @@ import { useAppSelector } from "@/lib/store/hooks";
 import { toast } from "sonner";
 
 const paymentMode: paymentMethodType[] = [
-  { key: "cash", label: "Cash on Delivery" },
+  { key: "cod", label: "Cash on Delivery" },
   { key: "card", label: "Card" },
 ];
 
  const formSchema = z.object({
    addressId: z.string().min(1, "Please select an address"),
-   paymentMethod: z.enum(["cash", "card"], {
+   paymentMethod: z.enum(["cod", "card"], {
      errorMap: () => ({ message: "Please select a payment method" }),
    }),
    message: z.string().optional(),
@@ -52,6 +53,7 @@ const CheckOutPage  = () => {
 
   const searchParams = useSearchParams();
   const cart = useAppSelector((state) => state.cart);
+  const idempotencyKeyRef = React.useRef("");
 
   const couponCodeRef = React.useRef("");
   const {
@@ -71,7 +73,7 @@ const CheckOutPage  = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       addressId: "",
-      paymentMethod: "cash",
+      paymentMethod: "cod",
       message: "",
     },
   });
@@ -80,9 +82,20 @@ const CheckOutPage  = () => {
     if (customer?.addresses.length && !form.getValues("addressId")) {
       const defaultAddress = customer.addresses.find(a => a.isDefault);
       const addressToSelect = defaultAddress || customer.addresses[0];
-      form.setValue("addressId", addressToSelect._id);
+      form.setValue("addressId", addressToSelect._id? addressToSelect._id : "");
     }
   },[customer, form]);
+
+  const {mutate} = useMutation({
+    mutationKey: ["createOrder"],
+    mutationFn: async(orderData: OrderData) => {
+      const idempotencyKey = idempotencyKeyRef.current ?
+                             idempotencyKeyRef.current :
+                             idempotencyKeyRef.current = uuidv4() + customer?._id;
+      await createOrder({orderData,idempotencyKey});
+    },
+    retry:3
+  })
 
   // Handle place order
    const handlePlaceOrder = (values: FormData) => {
@@ -96,24 +109,24 @@ const CheckOutPage  = () => {
       return;
      }
 
-     const orderData = {
+     const orderData:OrderData = {
       cart: cart.cartItems,
       couponCode: couponCodeRef.current?.trim() || "",
       tenantId: tenantId,
       comment: values.message || "",
       address: {
-        label: selectedAddress?.label || "",
+        label: selectedAddress?.label || "Home",
         text: selectedAddress?.text || "",
         city: selectedAddress?.city || "",
         postalCode: selectedAddress?.postalCode || "",
         phone: selectedAddress?.phone || "",
         isDefault: selectedAddress?.isDefault || false,
       },
-      customerId: customer?._id,
-      paymentMode: values.paymentMethod || "cash",
+      customerId: customer?._id || "",
+      paymentMode: values?.paymentMethod || "cod",
      }
 
-     console.log("Order data to be sent:", orderData);
+     mutate(orderData);
    };
 
   if (isLoading) return <CheckoutPageSkeleton />;
@@ -237,7 +250,7 @@ const CheckOutPage  = () => {
                                       key={address._id!}
                                       address={address}
                                       selected={field.value === address._id!}
-                                      value={address._id}
+                                      value={address._id? address._id : ""}
                                     />
                                   ))}
                               </RadioGroup>
