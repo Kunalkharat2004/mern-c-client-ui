@@ -92,7 +92,18 @@ const CheckOutPage  = () => {
       const idempotencyKey = idempotencyKeyRef.current ?
                              idempotencyKeyRef.current :
                              idempotencyKeyRef.current = uuidv4() + customer?._id;
-      await createOrder({orderData,idempotencyKey});
+      return await createOrder({orderData,idempotencyKey}).then(res => res.data);
+    },
+    onSuccess: (data: {paymentUrl: string| null}) =>{
+      if(data.paymentUrl){
+        window.location.href = data.paymentUrl;
+      }else {
+      // Else the payment is done via COD
+      toast.success("Order placed successfully! You will receive a confirmation soon.");
+      window.location.href = "/"; 
+      }
+
+      
     },
     retry:3
   })

@@ -84,7 +84,12 @@ export type SetCookiesParams = {
 };
 
 export type SearchParamsProps = {
-  searchParams: Promise<{ restaurantId?: string }>;
+  searchParams: Promise<{ 
+    restaurantId?: string
+    tenantId?: string;
+    orderId?: string;
+    success?: string;
+  }>;
 };
 
 export interface Address {
