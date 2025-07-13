@@ -157,3 +157,27 @@ export interface OrderData {
   comment?: string;
   paymentMode: "card" | "cod";
 }
+
+export enum PaymentMode {
+  CASH = "cod",
+  CARD = "card",
+}
+
+export interface OrderType {
+  _id?: string;
+  cart: CartItems[];
+  customerId: string;
+  total: number;
+  discount: number;
+  taxes: number;
+  deliveryCharges: number;
+  address: Address;
+  tenantId: string;
+  comment?: string;
+  paymentMode: PaymentMode;
+  orderStatus: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentId?: string;
+  receiptUrl?: string;
+  createdAt: Date;
+}
