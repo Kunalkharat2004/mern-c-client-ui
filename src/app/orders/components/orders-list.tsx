@@ -146,7 +146,7 @@ const OrderList = async ({
                       </TableCell>
                       <TableCell className="text-right">
                         <Link
-                          href={`/order-status/${order._id}`}
+                          href={`/order/${order._id}?restaurantId=${restaurantId}`}
                           className="text-primary underline"
                         >
                           View details
