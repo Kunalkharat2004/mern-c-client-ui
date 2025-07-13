@@ -40,11 +40,15 @@ export function LoginForm({
   const returnTo = searchParams.get("return-to") || "/";
    const restaurantId = searchParams.get("restaurantId") || "/";
 
+const paramsObject = Object.fromEntries(searchParams.entries());
+console.log("Search Params Object:", paramsObject);
+
+
   const finalURL = new URLSearchParams({ restaurantId: restaurantId });
 
   const existingQueryString = finalURL.toString();
-  
-  finalURL.append("return-to", `/checkout?${existingQueryString}`);
+  const returnToForRegister = returnTo.split("?")[0];
+  finalURL.append("return-to", `${returnToForRegister}?${existingQueryString}`);
   // Consider using a more robust client-side redirection or a React Router
   // for navigation. window.location.href can cause full page reloads.
   if (state.type === "success") {

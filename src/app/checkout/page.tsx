@@ -15,6 +15,8 @@ export default async function CheckOut({ searchParams }:SearchParamsProps) {
   const a = await searchParams;
  const sParams = new URLSearchParams(a);
  const existingQueryString = sParams.toString();
+ console.log("existing query string: ",existingQueryString);
+ 
 
  sParams.append("return-to", `/checkout?${existingQueryString}`);
  console.log("Search Params:", sParams.toString());

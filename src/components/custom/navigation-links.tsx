@@ -5,7 +5,6 @@ import Link from "next/link";
 
 export default function NavigationLinks() {
   const { restaurantId } = useSearchParamsContext();
-
   return (
     <>
       <Link
@@ -15,10 +14,10 @@ export default function NavigationLinks() {
         Menu
       </Link>
       <Link
-        href={`/orders/${restaurantId ? `?restaurantId=${restaurantId}` : ''}`}
+        href={`/orders?restaurantId=${restaurantId || ''}`}
         className="text-gray-700 hover:text-primary transition-colors duration-200"
       >
-        Orders
+        Order
       </Link>
     </>
   );
