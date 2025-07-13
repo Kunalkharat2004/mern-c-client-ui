@@ -1,8 +1,8 @@
 "use client";
 
 import { CheckCheck, FileCheck, Microwave, Package, Truck } from 'lucide-react';
-import { Step, StepItem, Stepper } from '@/components/stepper'
-import React from 'react'
+import { Step, StepItem, Stepper, useStepper } from '@/components/stepper'
+import React, { useEffect } from 'react'
 
 const steps = [
     { label: 'Received', icon: FileCheck, description: 'We are confirming your order' },
@@ -11,6 +11,18 @@ const steps = [
     { label: 'Out for delivery', icon: Truck, description: 'Driver is on the way' },
     { label: 'Delivered', icon: CheckCheck, description: 'Order completed' },
 ] satisfies StepItem[];
+
+const StepperChanger = () =>{
+    const {setStep,nextStep} = useStepper();
+    useEffect(()=>{
+        setInterval(()=>{
+            nextStep();
+        },4000)
+    },[])
+    return (
+        <></>
+    )
+}
 
 const OrderStatus = () => {
   return (
@@ -26,6 +38,7 @@ const OrderStatus = () => {
                 )
             })
         }
+        <StepperChanger/>
     </Stepper>
   )
 }
