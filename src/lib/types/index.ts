@@ -89,6 +89,8 @@ export type SearchParamsProps = {
     tenantId?: string;
     orderId?: string;
     success?: string;
+    page?:string;
+    limit?:string;
   }>;
 };
 

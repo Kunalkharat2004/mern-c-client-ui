@@ -18,7 +18,15 @@ async function OrdersPage({searchParams}: SearchParamsProps) {
   
   return(
     <>
-      <OrderList restaurantId={searchParameters.restaurantId}/>
+      <OrderList 
+      restaurantId={searchParameters.restaurantId}
+      searchParams={
+        {
+          page:searchParameters.page,
+          limit: searchParameters.limit
+        }
+      }
+      />
     </>
   )
  

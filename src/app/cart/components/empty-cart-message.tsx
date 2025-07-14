@@ -1,11 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShoppingCart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react'
 
 const EmptyCartMessage = () => {
    const router = useRouter();
+   const searchParams = useSearchParams();
+  const restaurantId = searchParams.get("restaurantId") || ""
+
   return (
     <Card className="text-center py-16 shadow-lg border border-gray-200 rounded-lg">
       <CardContent className="flex flex-col items-center justify-center">
@@ -20,7 +23,7 @@ const EmptyCartMessage = () => {
           size="lg"
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-8 rounded-md shadow-md cursor-pointer"
           onClick={() => {
-            router.push("/");
+            router.push(`/?restaurantId=${restaurantId}`);
           }}
         >
           Start Shopping

@@ -14,6 +14,7 @@ const CartItem = () => {
 
   const products: CartItems[] = useAppSelector((state) => state.cart.cartItems);
   const searchParams = useSearchParams();
+  const restaurantId = searchParams.get("restaurantId") || ""
   return (
     <div className="container mx-auto max-w-7xl px-4 py-10">
       {products.length > 0 ? (
@@ -42,7 +43,7 @@ const CartItem = () => {
             <Button
               variant={"outline"}
               onClick={() => {
-                router.push("/")
+                router.push(`/?restaurantId=${restaurantId}`)
               }} // Assign the click handler
               className="mt-4 md:mt-0 cursor-pointer" // Add some top margin for smaller screens, remove for md+
             >
@@ -52,9 +53,7 @@ const CartItem = () => {
               variant={"default"}
               onClick={() => {
                 router.push(
-                  `/checkout?restaurantId=${
-                    searchParams.get("restaurantId") || ""
-                  }`
+                  `/checkout?restaurantId=${restaurantId}`
                 );
               }} // Assign the click handler
               className="mt-4 md:mt-0 cursor-pointer" // Add some top margin for smaller screens, remove for md+
