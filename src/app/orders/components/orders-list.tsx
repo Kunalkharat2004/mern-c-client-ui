@@ -24,7 +24,7 @@ const OrderList = async ({
     const accessToken = cookieStore.get("accessToken")?.value;
 
     const ordersFetchResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order/api/order/${restaurantId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order/api/order/mine`,
       {
         next: { revalidate: 3600 }, // Cache for 1 hour
         headers: {

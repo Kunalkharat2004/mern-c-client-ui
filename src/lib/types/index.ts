@@ -92,6 +92,12 @@ export type SearchParamsProps = {
   }>;
 };
 
+export type ParamsProps = {
+  params: Promise<{
+    orderId?: string;
+  }>
+}
+
 export interface SearchParamsPropsHeader {
   searchParams: {
     restaurantId?: string

@@ -3,6 +3,8 @@
 import { CheckCheck, FileCheck, Microwave, Package, Truck } from 'lucide-react';
 import { Step, StepItem, Stepper, useStepper } from '@/components/stepper'
 import React, { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query';
+import { getSingleOrder } from '@/lib/http/api';
 
 const steps = [
     { label: 'Received', icon: FileCheck, description: 'We are confirming your order' },
@@ -12,19 +14,40 @@ const steps = [
     { label: 'Delivered', icon: CheckCheck, description: 'Order completed' },
 ] satisfies StepItem[];
 
-const StepperChanger = () =>{
-    const {setStep,nextStep} = useStepper();
+
+const statusMapping = {
+    received: 0,
+    confirmed: 1,
+    prepared: 2,
+    out_for_deliver: 3,
+    delivered: 4,
+} as { [key: string]: number };
+
+const StepperChanger = ({orderId}:{orderId:string}) =>{
+    const {setStep} = useStepper();
+    console.log("Orderid: ",orderId);
+    const {data} = useQuery({
+        queryKey:["order",orderId],
+        queryFn: async() =>{
+            const fields = "orderStatus";
+            return await getSingleOrder({orderId,fields}).then(res=> res.data);
+        },
+        refetchOnWindowFocus: false,
+        refetchInterval: 1000 * 30 // refetch after
+    })
     useEffect(()=>{
-        setInterval(()=>{
-            nextStep();
-        },4000)
-    },[])
+        if(data){
+            const currentStep = statusMapping[data.orderStatus] || 0;
+            setStep(currentStep + 1);
+        }
+    },[data,setStep]);
+
     return (
         <></>
     )
 }
 
-const OrderStatus = () => {
+const OrderStatus = ({orderId}:{orderId:string}) => {
   return (
    <Stepper initialStep={0} steps={steps} variant='circle-alt'>
         {
@@ -38,7 +61,7 @@ const OrderStatus = () => {
                 )
             })
         }
-        <StepperChanger/>
+        <StepperChanger orderId={orderId}/>
     </Stepper>
   )
 }
