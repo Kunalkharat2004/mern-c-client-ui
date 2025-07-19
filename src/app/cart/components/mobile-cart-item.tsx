@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CartItems, decrementCartItemQty, incrementCartItemQty, removeTopping } from '@/lib/store/feature/cart/cart-slice';
+import { CartItems, decrementCartItemQty, deleteCartItem, incrementCartItemQty, removeTopping } from '@/lib/store/feature/cart/cart-slice';
 import { useAppDispatch } from '@/lib/store/hooks';
 import { getCartProductPrice } from '@/lib/utils';
 import { Minus, Plus, Trash2 } from 'lucide-react';
@@ -111,7 +111,8 @@ const MobileCartItem = ({product}:{product:CartItems}) => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md"
+                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
+                  onClick={() => dispatch(deleteCartItem(product._id))}
                 >
                   <Trash2 className="h-6 w-6" />
                 </Button>
