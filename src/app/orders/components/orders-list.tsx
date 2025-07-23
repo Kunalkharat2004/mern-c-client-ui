@@ -41,7 +41,6 @@ const OrderList = async ({ restaurantId, searchParams }: OrderListProps) => {
     const ordersFetchResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order/api/order/mine?page=${page}&limit=${limit}`,
       {
-        next: { revalidate: 3600 }, // Cache for 1 hour
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,

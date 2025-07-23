@@ -14,7 +14,7 @@ export default function NavigationLinks() {
         Menu
       </Link>
       <Link
-        href={`/orders?restaurantId=${restaurantId || ''}&page=1&limit=2`}
+        href={`/orders?restaurantId=${restaurantId || ''}&page=1&limit=10`}
         className="text-gray-700 hover:text-primary transition-colors duration-200"
       >
         Order
