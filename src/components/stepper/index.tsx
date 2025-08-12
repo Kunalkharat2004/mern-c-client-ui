@@ -153,11 +153,13 @@ const HorizontalContent = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<>
 			{React.Children.map(childArr[activeStep], (node) => {
-				if (!React.isValidElement(node)) {
-					return null;
-				}
-				return React.Children.map(node.props.children, (childNode) => childNode);
-			})}
+	if (React.isValidElement(node)) {
+		const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+		return React.Children.map(element.props.children, (childNode) => childNode);
+	}
+	return null;
+})}
+
 		</>
 	);
 };
