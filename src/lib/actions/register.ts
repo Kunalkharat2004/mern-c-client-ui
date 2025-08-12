@@ -2,7 +2,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import cookie from "cookie";
+import * as cookie from 'cookie';
 
 export type RegisterState = {
     type: string;

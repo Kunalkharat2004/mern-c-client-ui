@@ -1,6 +1,6 @@
 "use server";
 
-import cookie from "cookie";
+import * as cookie from 'cookie';
 import { cookies } from "next/headers";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
