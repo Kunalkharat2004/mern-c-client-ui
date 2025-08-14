@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 import CartHeader from './components/cart-header';
 import DesktopCartTable from './components/desktop-cart-table';
 import MobileCartItem from './components/mobile-cart-item';
@@ -8,6 +8,7 @@ import { useAppSelector } from '@/lib/store/hooks';
 import { CartItems } from '@/lib/store/feature/cart/cart-slice';
 import { Button } from '@/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 const CartItem = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ const CartItem = () => {
   const products: CartItems[] = useAppSelector((state) => state.cart.cartItems);
   const searchParams = useSearchParams();
   const restaurantId = searchParams.get("restaurantId") || ""
+  const [isProceedToCheckoutClicked, setIsProceedToCheckoutClicked] = useState<boolean>(false);
   return (
     <div className="container mx-auto max-w-7xl px-4 py-10">
       {products.length > 0 ? (
@@ -50,15 +52,24 @@ const CartItem = () => {
               Continue Shopping
             </Button>
             <Button
+              disabled={isProceedToCheckoutClicked}
               variant={"default"}
               onClick={() => {
+                setIsProceedToCheckoutClicked(true);
                 router.push(
                   `/checkout?restaurantId=${restaurantId}`
                 );
               }} // Assign the click handler
               className="mt-4 md:mt-0 cursor-pointer" // Add some top margin for smaller screens, remove for md+
             >
-              Proceed to Checkout
+              {isProceedToCheckoutClicked ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Proceed to Checkout"
+                )}
             </Button>
           </div>
         </div>
