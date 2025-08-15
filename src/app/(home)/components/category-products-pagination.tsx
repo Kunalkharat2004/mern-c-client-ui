@@ -134,7 +134,7 @@ export default function CategoryProductsPagination({
     return () => {
       isMounted = false;
     };
-  }, [categoryId, page, pageSize, tenantId, cacheKey]);
+  }, [categoryId, CACHE_TTL, page, pageSize, tenantId, cacheKey]);
 
   const goToPage = (n: number) => {
     if (n < 1 || n > totalPages) return;

@@ -206,6 +206,7 @@ const ProductDialog = ({ product }: ProductProps) => {
                 <ToppingList
                   selectedToppings={selectedToppings}
                   handleToppingSelect={handleToppingSelect}
+                  categoryId={product.category._id}
                 />
               </Suspense>
             )}

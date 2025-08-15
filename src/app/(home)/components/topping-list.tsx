@@ -6,9 +6,11 @@ import { useSearchParams } from "next/navigation";
 const ToppingList = ({
   selectedToppings,
   handleToppingSelect,
+  categoryId
 }: {
   selectedToppings: Topping[];
   handleToppingSelect: (topping: Topping) => void;
+  categoryId: string;
 }) => {
   const [toppings, setToppings] = React.useState<Topping[]>([]);
   const searchParams = useSearchParams();
@@ -16,7 +18,7 @@ const ToppingList = ({
   useEffect(() => {
     const fetchToppings = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/toppings?tenantId=${searchParams.get("restaurantId")}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/api/toppings?tenantId=${searchParams.get("restaurantId")}&categoryId=${categoryId}`,
       );
       if (!response.ok) {
         throw new Error("Failed to load toppings");
@@ -28,7 +30,7 @@ const ToppingList = ({
     };
 
     fetchToppings();
-  }, []);
+  }, [categoryId, searchParams]);
 
   return (
     <section className="w-full">
